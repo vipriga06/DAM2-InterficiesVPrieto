@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="460.0" prefWidth="360.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.segadb.ControllerMain">
+   <children>
+      <VBox prefHeight="460.0" prefWidth="360.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <HBox alignment="CENTER" maxHeight="50.0" minHeight="50.0" style="-fx-background-color: rgb(0, 102, 204);" VBox.vgrow="NEVER">
+               <children>
+                  <Label maxHeight="50.0" text="Sega DB" textFill="WHITE" HBox.hgrow="ALWAYS">
+                     <font>
+                        <Font size="24.0" />
+                     </font>
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </Label>
+               </children>
+            </HBox>
+            <ScrollPane fitToHeight="true" fitToWidth="true" VBox.vgrow="ALWAYS">
+               <content>
+                  <VBox fx:id="list" alignment="TOP_CENTER" prefWidth="360.0" spacing="20.0" style="-fx-background-color: black;">
+                     <children>
+                        <AnchorPane maxHeight="135.0" onMouseClicked="#toViewCharacters" prefHeight="118.0" prefWidth="358.0" style="-fx-background-color: rgb(84 , 109, 142);" VBox.vgrow="ALWAYS">
+                           <children>
+                              <HBox alignment="CENTER_LEFT" prefHeight="59.0" prefWidth="360.0" spacing="20.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
+                                 <children>
+                                    <Label alignment="CENTER" contentDisplay="CENTER" maxHeight="50.0" prefHeight="50.0" prefWidth="322.0" text="Personatges" textAlignment="CENTER" textFill="WHITE">
+                                       <font>
+                                          <Font name="Impact" size="18.0" />
+                                       </font>
+                                       <HBox.margin>
+                                          <Insets left="15.0" />
+                                       </HBox.margin>
+                                    </Label>
+                                    <ImageView fx:id="characterImage" fitHeight="88.0" fitWidth="134.0" pickOnBounds="true" preserveRatio="true">
+                                       <HBox.margin>
+                                          <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                       </HBox.margin>
+                                    </ImageView>
+                                 </children>
+                              </HBox>
+                           </children>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </AnchorPane>
+                        <ImageView fx:id="image" fitHeight="153.0" fitWidth="257.0" pickOnBounds="true" preserveRatio="true" translateY="10.0" />
+                     </children>
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                  </VBox>
+               </content>
+            </ScrollPane>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>
