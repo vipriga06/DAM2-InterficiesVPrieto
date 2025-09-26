@@ -29,7 +29,7 @@ public class Controller {
         String buttonText = ((Button) event.getSource()).getText();
 
         if (operator != null && !newInput) {
-            // Si ya hay un operador y un número, calcula antes de asignar el nuevo
+            // Si ja hi ha un operador i un número, calcula abans d'assignar el nou
             handleEquals(null);
         }
 
