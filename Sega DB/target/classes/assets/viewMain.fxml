@@ -16,7 +16,7 @@
          <children>
             <HBox alignment="CENTER" maxHeight="50.0" minHeight="50.0" style="-fx-background-color: rgb(0, 102, 204);" VBox.vgrow="NEVER">
                <children>
-                  <Label maxHeight="50.0" text="Sega DB" HBox.hgrow="ALWAYS">
+                  <Label maxHeight="50.0" text="Sega DB" textFill="WHITE" HBox.hgrow="ALWAYS">
                      <font>
                         <Font size="24.0" />
                      </font>
