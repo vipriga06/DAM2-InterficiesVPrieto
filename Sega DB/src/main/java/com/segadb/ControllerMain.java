@@ -9,13 +9,18 @@ import java.util.Scanner;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import javafx.animation.FadeTransition;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
+import javafx.util.Duration;
 
 public class ControllerMain {
 
@@ -32,6 +37,12 @@ public class ControllerMain {
     private Text nom1;
 
     private List<CharacterData> characters = new ArrayList<>();
+
+    private Stage stage;
+    private Scene normalScene;
+    private Scene mobileScene;
+    private Parent normalRoot;
+    private Parent mobileRoot;
 
     @FXML
     public void initialize() {
@@ -87,6 +98,57 @@ public class ControllerMain {
 
                 characters.add(new CharacterData(name, image, color, game));
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setStage(Stage stage) {
+        this.stage = stage;
+
+        try {
+            // Cargar las vistas
+            FXMLLoader normalLoader = new FXMLLoader(Main.class.getResource("/assets/viewMain.fxml"));
+            normalRoot = normalLoader.load();
+            normalScene = new Scene(normalRoot);
+
+            FXMLLoader mobileLoader = new FXMLLoader(Main.class.getResource("/assets/viewMainMobile.fxml"));
+            mobileRoot = mobileLoader.load();
+            mobileScene = new Scene(mobileRoot);
+
+            // Configurar las transiciones
+            FadeTransition fadeOut = new FadeTransition(Duration.millis(150));
+            fadeOut.setFromValue(1.0);
+            fadeOut.setToValue(0.0);
+
+            FadeTransition fadeIn = new FadeTransition(Duration.millis(150));
+            fadeIn.setFromValue(0.0);
+            fadeIn.setToValue(1.0);
+
+            // Añadir listener para el cambio de tamaño
+            stage.widthProperty().addListener((obs, oldVal, newVal) -> {
+                if (newVal.doubleValue() < 400) { // Cambiado a 400
+                    if (stage.getScene() != mobileScene) {
+                        fadeOut.setNode(stage.getScene().getRoot());
+                        fadeOut.setOnFinished(e -> {
+                            stage.setScene(mobileScene);
+                            fadeIn.setNode(mobileScene.getRoot());
+                            fadeIn.play();
+                        });
+                        fadeOut.play();
+                    }
+                } else {
+                    if (stage.getScene() != normalScene) {
+                        fadeOut.setNode(stage.getScene().getRoot());
+                        fadeOut.setOnFinished(e -> {
+                            stage.setScene(normalScene);
+                            fadeIn.setNode(normalScene.getRoot());
+                            fadeIn.play();
+                        });
+                        fadeOut.play();
+                    }
+                }
+            });
         } catch (Exception e) {
             e.printStackTrace();
         }
