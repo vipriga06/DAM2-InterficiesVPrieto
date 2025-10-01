@@ -1,6 +1,5 @@
 com\segadb\ControllerMain.class
-com\segadb\ControllerCharacters.class
-com\segadb\ControllerCharacter.class
+com\segadb\CharacterData.class
 com\segadb\ControllerItem1.class
 com\segadb\Main.class
 com\utils\UtilsViews.class

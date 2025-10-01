@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.image.ImageView?>
@@ -9,8 +9,9 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="460.0" prefWidth="360.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.segadb.ControllerMain">
+<AnchorPane prefHeight="400.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.segadb.ControllerMain">
    <children>
       <VBox prefHeight="460.0" prefWidth="360.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -26,42 +27,50 @@
                   </Label>
                </children>
             </HBox>
-            <ScrollPane fitToHeight="true" fitToWidth="true" VBox.vgrow="ALWAYS">
-               <content>
-                  <VBox fx:id="list" alignment="TOP_CENTER" prefWidth="360.0" spacing="20.0" style="-fx-background-color: black;">
+            <HBox alignment="CENTER_LEFT" prefHeight="356.0" prefWidth="700.0" spacing="10.0">
+               <children>
+                  <VBox alignment="CENTER" prefHeight="350.0" prefWidth="263.0" spacing="10.0">
                      <children>
-                        <AnchorPane maxHeight="135.0" onMouseClicked="#toViewCharacters" prefHeight="118.0" prefWidth="358.0" style="-fx-background-color: rgb(84 , 109, 142);" VBox.vgrow="ALWAYS">
-                           <children>
-                              <HBox alignment="CENTER" prefHeight="59.0" prefWidth="360.0" spacing="10.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
+                        <ChoiceBox prefWidth="150.0" />
+                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="282.0" prefWidth="254.0">
+                           <content>
+                              <VBox fx:id="list1" alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity">
                                  <children>
-                                    <Label alignment="CENTER" contentDisplay="CENTER" maxHeight="50.0" prefHeight="50.0" prefWidth="103.0" text="Personatges" textAlignment="CENTER" textFill="WHITE">
-                                       <font>
-                                          <Font name="Impact" size="18.0" />
-                                       </font>
-                                       <HBox.margin>
-                                          <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                       </HBox.margin>
-                                    </Label>
-                                    <ImageView fx:id="characterImage" fitHeight="88.0" fitWidth="134.0" pickOnBounds="true" preserveRatio="true">
-                                       <HBox.margin>
-                                          <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                       </HBox.margin>
-                                    </ImageView>
+                                    <AnchorPane maxWidth="-Infinity" prefWidth="370.0" style="-fx-background-color: white; -fx-border-style: solid; -fx-border-width: 0 0 1 0; -fx-border-color: grey;" VBox.vgrow="ALWAYS" />
                                  </children>
-                              </HBox>
-                           </children>
-                           <cursor>
-                              <Cursor fx:constant="HAND" />
-                           </cursor>
-                        </AnchorPane>
-                        <ImageView fx:id="image" fitHeight="153.0" fitWidth="257.0" pickOnBounds="true" preserveRatio="true" translateY="10.0" />
+                              </VBox>
+                           </content>
+                        </ScrollPane>
                      </children>
                      <padding>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </padding>
+                     <HBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </HBox.margin>
                   </VBox>
-               </content>
-            </ScrollPane>
+                  <VBox alignment="CENTER" prefHeight="331.0" prefWidth="391.0" spacing="20.0">
+                     <children>
+                        <ImageView fx:id="image" fitHeight="170.0" fitWidth="286.0" pickOnBounds="true" preserveRatio="true" />
+                        <Text fx:id="nom" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" textAlignment="CENTER" wrappingWidth="284.536678314209">
+                           <font>
+                              <Font size="32.0" />
+                           </font>
+                        </Text>
+                        <Text fx:id="nom1" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
+                     </children>
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                     <HBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </HBox.margin>
+                  </VBox>
+               </children>
+               <padding>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </padding>
+            </HBox>
          </children>
       </VBox>
    </children>
