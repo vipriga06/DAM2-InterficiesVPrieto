@@ -31,25 +31,32 @@ public class ControllerCharacters implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        Path imagePath = null;
         try {
             URL imageURL = getClass().getResource("/assets/imagesTot/arrow-back.png");
-            Image image = new Image(imageURL.toExternalForm());
-            imgArrowBack.setImage(image);
+            if (imageURL == null) {
+                System.err.println("No se encontró la imagen: /assets/imagesTot/arrow-back.png");
+            } else {
+                Image image = new Image(imageURL.toExternalForm());
+                imgArrowBack.setImage(image);
+            }
         } catch (Exception e) {
-            System.err.println("Error loading image asset: " + imagePath);
+            System.err.println("Error loading image asset: /assets/imagesTot/arrow-back.png");
             e.printStackTrace();
         }
     }
 
     public void loadList() {
         try {
-            URL jsonFileURL = getClass().getResource("/assets/data/characters.json");
+            URL jsonFileURL = getClass().getResource("/assets/data/characters_sega.json");
+            if (jsonFileURL == null) {
+                System.err.println("No se encontró el archivo JSON: /assets/data/characters_sega.json");
+                return; // Salir para evitar NullPointerException
+            }
             Path path = Paths.get(jsonFileURL.toURI());
             String content = new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
             JSONArray jsonInfo = new JSONArray(content);
             String pathImages = "/assets/imagesTot/";
-            
+
             list.getChildren().clear();
             for (int i = 0; i < jsonInfo.length(); i++) {
                 JSONObject character = jsonInfo.getJSONObject(i);
@@ -57,10 +64,12 @@ public class ControllerCharacters implements Initializable {
                 String image = character.getString("image");
                 String color = character.getString("color");
                 String game = character.getString("game");
-                
-                // TODO: Aquí carregar subvista  
-                // amb les dades de cada objecte enlloc d'un Label
+
                 URL resource = this.getClass().getResource("/assets/subviewCharacters.fxml");
+                if (resource == null) {
+                    System.err.println("No se encontró el archivo FXML: /assets/subviewCharacters.fxml");
+                    return; // Salir para evitar errores
+                }
                 FXMLLoader loader = new FXMLLoader(resource);
                 Parent itemPane = loader.load();
                 ControllerItem1 itemController = loader.getController();
@@ -69,14 +78,8 @@ public class ControllerCharacters implements Initializable {
                 itemController.setImage(pathImages + image);
                 itemController.setTitle(name);
                 itemController.setSubtitle(game);
-                
 
-                // Afegir el nou element a l'espai que l'hi hem reservat (itemBox)
                 list.getChildren().add(itemPane);
-
-                // Label label = new Label(name);
-                // label.setStyle("-fx-border-color: green;");
-                // list.getChildren().add(label);
             }
         } catch (Exception e) {
             System.err.println("Error al cargar la lista de personajes");

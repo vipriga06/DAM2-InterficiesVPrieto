@@ -9,14 +9,20 @@
 
 <AnchorPane maxHeight="55.0" maxWidth="270.0" minHeight="-Infinity" nodeOrientation="RIGHT_TO_LEFT" onMouseClicked="#toViewCharacter" prefHeight="55.0" prefWidth="270.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.segadb.ControllerItem1">
    <children>
-      <ImageView fx:id="image" fitHeight="39.0" fitWidth="68.0" layoutX="154.0" layoutY="3.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="13.0" AnchorPane.leftAnchor="154.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="3.0" />
-      <Label fx:id="title" layoutX="13.0" prefHeight="25.0" text="TitleText" AnchorPane.leftAnchor="13.0" AnchorPane.rightAnchor="17.0" AnchorPane.topAnchor="0.0">
+      <ImageView fx:id="image" fitHeight="39.0" preserveRatio="true" pickOnBounds="true"
+                 AnchorPane.topAnchor="3.0" AnchorPane.bottomAnchor="13.0" AnchorPane.rightAnchor="10.0" AnchorPane.leftAnchor="180.0" />
+      
+      <Label fx:id="title" text="TitleText" AnchorPane.topAnchor="0.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="200.0" prefHeight="25.0">
          <font>
             <Font size="18.0" />
          </font>
       </Label>
-      <Label fx:id="subtitle" minWidth="150.0" prefHeight="17.0" text="Subtitle Text" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="25.0" />
-      <Circle fx:id="circle" fill="#1fff42" layoutX="245.0" layoutY="22.0" radius="14.0" stroke="BLACK" strokeType="INSIDE" AnchorPane.leftAnchor="231.0" />
-      <Pane layoutY="50.0" prefHeight="5.0" prefWidth="272.0" style="-fx-background-color: #000000;" />
+      
+      <Label fx:id="subtitle" text="Subtitle Text" minWidth="150.0" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="200.0" prefHeight="17.0" />
+      
+      <Circle fx:id="circle" fill="#1fff42" radius="14.0" stroke="BLACK" strokeType="INSIDE"
+              AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="20.0" />
+      
+      <Pane layoutY="50.0" prefHeight="5.0" style="-fx-background-color: #000000;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.bottomAnchor="0.0" />
    </children>
 </AnchorPane>

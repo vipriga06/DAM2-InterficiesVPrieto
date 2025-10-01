@@ -32,14 +32,14 @@
                      <children>
                         <AnchorPane maxHeight="135.0" onMouseClicked="#toViewCharacters" prefHeight="118.0" prefWidth="358.0" style="-fx-background-color: rgb(84 , 109, 142);" VBox.vgrow="ALWAYS">
                            <children>
-                              <HBox alignment="CENTER_LEFT" prefHeight="59.0" prefWidth="360.0" spacing="20.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
+                              <HBox alignment="CENTER" prefHeight="59.0" prefWidth="360.0" spacing="10.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
                                  <children>
-                                    <Label alignment="CENTER" contentDisplay="CENTER" maxHeight="50.0" prefHeight="50.0" prefWidth="322.0" text="Personatges" textAlignment="CENTER" textFill="WHITE">
+                                    <Label alignment="CENTER" contentDisplay="CENTER" maxHeight="50.0" prefHeight="50.0" prefWidth="103.0" text="Personatges" textAlignment="CENTER" textFill="WHITE">
                                        <font>
                                           <Font name="Impact" size="18.0" />
                                        </font>
                                        <HBox.margin>
-                                          <Insets left="15.0" />
+                                          <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                        </HBox.margin>
                                     </Label>
                                     <ImageView fx:id="characterImage" fitHeight="88.0" fitWidth="134.0" pickOnBounds="true" preserveRatio="true">
