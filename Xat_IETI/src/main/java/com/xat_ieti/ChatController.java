@@ -1,33 +1,45 @@
 package com.xat_ieti;
 
 import java.io.File;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
+import org.w3c.dom.Node;
+
+import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.stage.FileChooser;
+import javafx.util.Duration;
 
 public class ChatController {
     
@@ -64,31 +76,86 @@ public class ChatController {
         
         // Inicializar el modo de texto
         setTextMode();
+        
+        // Hacer el chatContainer seleccionable
+        makeChatSelectable();
+    }
+
+    private void makeChatSelectable() {
+        // Permitir selección de texto en todo el chat
+        chatContainer.setOnMouseClicked(null); // Elimina cualquier handler que impida la selección
+        
+        // Asegurar que los elementos de texto sean focusable
+        Platform.runLater(() -> {
+            chatContainer.setFocusTraversable(false);
+        });
     }
 
     private void applyStyles() {
-        // Esperar a que la escena esté disponible
         Platform.runLater(() -> {
             if (scrollPane.getScene() != null) {
-                String css = """
-                    .scroll-pane {
-                        -fx-background: transparent;
-                        -fx-background-color: transparent;
+                // Cargar el archivo CSS externo
+                try {
+                    File cssFile = new File("styles.css");
+                    if (cssFile.exists()) {
+                        scrollPane.getScene().getStylesheets().add(cssFile.toURI().toString());
+                    } else {
+                        // Fallback: usar CSS embebido
+                        String embeddedCss = getClass().getResource("/styles.css").toExternalForm();
+                        scrollPane.getScene().getStylesheets().add(embeddedCss);
                     }
-                    .scroll-pane .viewport {
-                        -fx-background-color: transparent;
-                    }
-                    .scroll-bar:vertical {
-                        -fx-background-color: transparent;
-                    }
-                    .scroll-bar:vertical .track {
-                        -fx-background-color: transparent;
-                    }
-                    .scroll-bar:vertical .thumb {
-                        -fx-background-color: #505050;
-                    }
-                """;
-                scrollPane.getScene().getStylesheets().add("data:text/css," + css);
+                } catch (Exception e) {
+                    // CSS embebido como fallback
+                    String embeddedCss = """
+                        .root {
+                            -fx-background-color: #121212;
+                        }
+                        .scroll-pane {
+                            -fx-background: transparent;
+                            -fx-background-color: transparent;
+                        }
+                        .scroll-pane .viewport {
+                            -fx-background-color: transparent;
+                        }
+                        .scroll-bar:vertical .thumb {
+                            -fx-background-color: #404040;
+                            -fx-background-radius: 10;
+                        }
+                        #chatContainer {
+                            -fx-background-color: #121212;
+                        }
+                        #topBar {
+                            -fx-background-color: #1e1e1e;
+                        }
+                        #inputBar {
+                            -fx-background-color: #1e1e1e;
+                        }
+                        .button {
+                            -fx-background-color: #333333;
+                            -fx-background-radius: 8;
+                            -fx-text-fill: white;
+                        }
+                        #sendButton {
+                            -fx-background-color: #1976d2;
+                        }
+                        #stopButton {
+                            -fx-background-color: #d32f2f;
+                        }
+                        .text-area {
+                            -fx-background-color: #2d2d2d;
+                            -fx-background-radius: 8;
+                            -fx-text-fill: white;
+                        }
+                        .text-area .content {
+                            -fx-background-color: #2d2d2d;
+                        }
+                        #modeLabel {
+                            -fx-text-fill: #cccccc;
+                            -fx-font-weight: bold;
+                        }
+                    """;
+                    scrollPane.getScene().getStylesheets().add("data:text/css," + embeddedCss);
+                }
             }
         });
     }
@@ -278,8 +345,26 @@ public class ChatController {
                 currentAssistantMessage += text;
                 HBox lastBubble = messageBubbles.get(messageBubbles.size() - 1);
                 VBox bubbleVBox = (VBox) lastBubble.getChildren().get(0);
-                Label content = (Label) bubbleVBox.getChildren().get(1);
-                content.setText(currentAssistantMessage);
+                
+                // Verificar si el último mensaje contiene código
+                if (containsCode(currentAssistantMessage)) {
+                    // Recrear la burbuja con el código completo
+                    chatContainer.getChildren().remove(lastBubble);
+                    HBox newBubble = createMessageBubble(currentAssistantMessage, "assistant");
+                    chatContainer.getChildren().add(newBubble);
+                    messageBubbles.set(messageBubbles.size() - 1, newBubble);
+                } else {
+                    // Actualizar texto normal
+                    Node contentNode = (Node) bubbleVBox.getChildren().get(1);
+                    if (contentNode instanceof TextArea) {
+                        TextArea content = (TextArea) contentNode;
+                        content.setText(currentAssistantMessage);
+                        
+                        // Auto-ajustar altura
+                        int lines = currentAssistantMessage.split("\n").length;
+                        content.setPrefRowCount(Math.min(Math.max(lines, 1), 10));
+                    }
+                }
             }
             scrollToBottom();
         });
@@ -294,21 +379,38 @@ public class ChatController {
         container.setPadding(new Insets(5));
         
         VBox bubble = new VBox(5);
-        bubble.setMaxWidth(400);
+        bubble.setMaxWidth(600);
         bubble.setStyle("-fx-background-color: " + 
-                       (type.equals("user") ? "#007acc" : "#404040") + 
-                       "; -fx-background-radius: 15; -fx-padding: 10;");
+                    (type.equals("user") ? "#007acc" : "#404040") + 
+                    "; -fx-background-radius: 15; -fx-padding: 10;");
 
-        Label header = new Label(type.equals("user") ? "You" : "Assistant");
-        header.setStyle("-fx-font-weight: bold; -fx-text-fill: " + 
-                       (type.equals("user") ? "#a0d0ff" : "#a0ffa0") + ";");
+        // Header con imagen para assistant o solo texto para user
+        HBox headerBox = new HBox();
+        headerBox.setAlignment(Pos.CENTER_LEFT);
+        headerBox.setSpacing(8);
+        
+        if (type.equals("assistant")) {
+            // Añadir imagen de yeti para el assistant
+            ImageView yetiIcon = createYetiIcon();
+            Label header = new Label("Assistant");
+            header.setStyle("-fx-font-weight: bold; -fx-text-fill: #a0ffa0;");
+            
+            headerBox.getChildren().addAll(yetiIcon, header);
+        } else {
+            // Solo texto para el usuario
+            Label header = new Label("You");
+            header.setStyle("-fx-font-weight: bold; -fx-text-fill: #a0d0ff;");
+            headerBox.getChildren().add(header);
+        }
 
-        Label content = new Label(message);
-        content.setWrapText(true);
-        content.setFont(Font.font(14));
-        content.setStyle("-fx-text-fill: white;");
-
-        bubble.getChildren().addAll(header, content);
+        // Detectar si el mensaje contiene código
+        if (containsCode(message)) {
+            VBox contentBox = createCodeBlock(message, type);
+            bubble.getChildren().addAll(headerBox, contentBox);
+        } else {
+            TextArea textArea = createSelectableTextArea(message);
+            bubble.getChildren().addAll(headerBox, textArea);
+        }
         
         if (type.equals("user")) {
             container.setAlignment(Pos.CENTER_RIGHT);
@@ -320,6 +422,191 @@ public class ChatController {
         
         container.getChildren().add(bubble);
         return container;
+    }
+
+    private ImageView createYetiIcon() {
+        try {
+            // Cargar la imagen del yeti desde assets
+            InputStream imageStream = getClass().getResourceAsStream("/assets/yeti.jpg");
+            if (imageStream != null) {
+                Image yetiImage = new Image(imageStream);
+                ImageView yetiIcon = new ImageView(yetiImage);
+                yetiIcon.setFitWidth(20);
+                yetiIcon.setFitHeight(20);
+                yetiIcon.setPreserveRatio(true);
+                yetiIcon.setStyle("-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 2, 0, 1, 1);");
+                return yetiIcon;
+            } else {
+                // Si no se encuentra la imagen, crear un placeholder
+                System.err.println("No se pudo cargar la imagen del yeti desde /assets/yeti.jpg");
+                return createPlaceholderYeti();
+            }
+        } catch (Exception e) {
+            System.err.println("Error cargando la imagen del yeti: " + e.getMessage());
+            return createPlaceholderYeti();
+        }
+    }
+
+    private ImageView createPlaceholderYeti() {
+        // Crear un círculo azul como placeholder si no hay imagen
+        Circle placeholder = new Circle(10);
+        placeholder.setFill(Color.LIGHTBLUE);
+        
+        // Convertir el círculo a ImageView
+        WritableImage image = new WritableImage(20, 20);
+        SnapshotParameters params = new SnapshotParameters();
+        params.setFill(Color.TRANSPARENT);
+        
+        StackPane tempPane = new StackPane(placeholder);
+        tempPane.snapshot(params, image);
+        
+        ImageView placeholderIcon = new ImageView(image);
+        placeholderIcon.setFitWidth(20);
+        placeholderIcon.setFitHeight(20);
+        
+        return placeholderIcon;
+    }
+
+    private TextArea createSelectableTextArea(String text) {
+        TextArea textArea = new TextArea(text);
+        textArea.setEditable(false);
+        textArea.setWrapText(true);
+        textArea.setPrefRowCount(1);
+        textArea.setStyle("-fx-control-inner-background: transparent; " +
+                        "-fx-background-color: transparent; " +
+                        "-fx-border-color: transparent; " +
+                        "-fx-text-fill: white; " +
+                        "-fx-font-size: 14px; " +
+                        "-fx-padding: 0;");
+        
+        // Auto-ajustar altura
+        textArea.textProperty().addListener((observable, oldValue, newValue) -> {
+            int lines = newValue.split("\n").length;
+            textArea.setPrefRowCount(Math.min(Math.max(lines, 1), 10));
+        });
+        
+        return textArea;
+    }
+
+    private boolean containsCode(String message) {
+        // Detectar patrones comunes de código
+        return message.contains("```") || 
+            message.contains("\\u003c") ||
+            message.matches(".*(public|class|function|def|import|package).*") ||
+            message.contains("<html") ||
+            message.contains("DOCTYPE");
+    }
+
+    private VBox createCodeBlock(String message, String type) {
+        VBox codeContainer = new VBox(5);
+        codeContainer.getStyleClass().add("code-block");
+        
+        // Header con lenguaje y botón de copiar
+        HBox headerBox = new HBox();
+        headerBox.setAlignment(Pos.CENTER_LEFT);
+        headerBox.setSpacing(10);
+        
+        Label languageLabel = new Label(detectLanguage(message));
+        languageLabel.getStyleClass().add("code-header");
+        
+        Button copyButton = new Button("Copy");
+        copyButton.getStyleClass().add("copy-button");
+        copyButton.setOnAction(e -> copyToClipboard(extractCodeContent(message)));
+        
+        HBox.setHgrow(languageLabel, Priority.ALWAYS);
+        headerBox.getChildren().addAll(languageLabel, copyButton);
+        
+        // Área de texto para el código (ya es seleccionable por defecto)
+        String codeContent = extractCodeContent(message);
+        TextArea codeArea = new TextArea(codeContent);
+        codeArea.setEditable(false);
+        codeArea.setWrapText(true);
+        codeArea.setStyle("-fx-control-inner-background: #1e1e1e; " +
+                        "-fx-background-color: #1e1e1e; " +
+                        "-fx-text-fill: #d4d4d4; " +
+                        "-fx-font-family: 'Consolas', 'Monaco', 'Courier New', monospace; " +
+                        "-fx-font-size: 12px; " +
+                        "-fx-border-color: #404040; " +
+                        "-fx-border-radius: 4;");
+        
+        // Auto-ajustar altura según el contenido
+        int lineCount = codeContent.split("\n").length;
+        codeArea.setPrefRowCount(Math.min(Math.max(lineCount, 3), 15));
+        
+        codeContainer.getChildren().addAll(headerBox, codeArea);
+        return codeContainer;
+    }
+
+    private String detectLanguage(String message) {
+        if (message.contains("html") || message.contains("\\u003c")) return "HTML";
+        if (message.contains("public class")) return "Java";
+        if (message.contains("def ")) return "Python";
+        if (message.contains("function")) return "JavaScript";
+        if (message.contains("<?php")) return "PHP";
+        return "Code";
+    }
+
+    private String extractCodeContent(String message) {
+        // Limpiar el código de caracteres escapados y formato
+        String cleaned = message
+            .replace("\\u003c", "<")
+            .replace("\\u003e", ">")
+            .replace("\\\"", "\"")
+            .replace("\\\\", "\\")
+            .replace("\\n", "\n")
+            .replace("\\t", "\t");
+        
+        // Extraer código entre ``` si existe
+        if (cleaned.contains("```")) {
+            String[] parts = cleaned.split("```");
+            if (parts.length >= 2) {
+                // Remover el lenguaje si está especificado
+                String code = parts[1].trim();
+                if (code.contains("\n")) {
+                    int firstNewline = code.indexOf("\n");
+                    if (firstNewline > 0) {
+                        code = code.substring(firstNewline + 1);
+                    }
+                }
+                return code.trim();
+            }
+        }
+        
+        return cleaned.trim();
+    }
+
+    private int calculateRowCount(String code) {
+        int lines = code.split("\n").length;
+        return Math.min(Math.max(lines, 3), 15); // Mínimo 3, máximo 15 líneas
+    }
+
+    private void copyToClipboard(String text) {
+        Clipboard clipboard = Clipboard.getSystemClipboard();
+        ClipboardContent content = new ClipboardContent();
+        content.putString(text);
+        clipboard.setContent(content);
+        
+        // Mostrar confirmación
+        showNotification("Code copied to clipboard!");
+    }
+
+    private void showNotification(String message) {
+        Platform.runLater(() -> {
+            Tooltip tooltip = new Tooltip(message);
+            tooltip.setAutoHide(true);
+            tooltip.show(sendButton.getScene().getWindow());
+            
+            // Auto-ocultar después de 2 segundos
+            PauseTransition delay = new PauseTransition(Duration.seconds(2));
+            delay.setOnFinished(e -> tooltip.hide());
+            delay.play();
+        });
+    }
+
+    @FXML
+    private void handleChatClick(MouseEvent event) {
+        // Permite hacer clic en el área del chat sin afectar la selección de texto
+        event.consume();
     }
 
     private void scrollToBottom() {
