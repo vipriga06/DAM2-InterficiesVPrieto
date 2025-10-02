@@ -7,13 +7,12 @@ import java.util.Base64;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-import org.w3c.dom.Node;
-
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -426,7 +425,7 @@ public class ChatController {
     private ImageView createYetiIcon() {
         try {
             // Método más directo para cargar la imagen
-            String imagePath = "/assets/yeti.jpg";
+            String imagePath = "/assets/ieti.jpg";
             java.net.URL imageUrl = getClass().getResource(imagePath);
             
             if (imageUrl != null) {

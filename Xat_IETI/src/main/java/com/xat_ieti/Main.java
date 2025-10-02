@@ -3,8 +3,10 @@ package com.xat_ieti;
 import com.utils.UtilsViews;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Scene;
-import javafx.stage.Stage;
+import javafx.scene.control.Alert;
+import javafx.stage.Stage; // Importar Platform
 
 public class Main extends Application {
     
@@ -12,11 +14,31 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        // 1. Verificar si Ollama está instalado
+        if (!OllamaInstaller.isOllamaInstalled()) {
+            // Si no está instalado, preguntar al usuario qué hacer
+            OllamaInstaller.promptOllamaInstallation().thenAccept(shouldExit -> {
+                if (shouldExit) {
+                    // El usuario eligió ir a la página de descarga, pero la aplicación debe cerrarse para que instale.
+                    // Se asume que el usuario instalará y luego reiniciará la aplicación.
+                    Platform.exit(); 
+                } else {
+                    // El usuario eligió salir de la aplicación
+                    Platform.exit();
+                }
+            });
+            return; // Salir del método start si Ollama no está instalado
+        }
+
+        // Si Ollama está instalado, continuar con el inicio de la aplicación
+        System.out.println("Ollama is installed. Proceeding with application startup.");
+
         // Iniciar Ollama serve
         startOllamaServer();
         
         // Esperar un momento para que Ollama se inicie
-        Thread.sleep(2000);
+        // Idealmente, esto debería ser un sondeo o una verificación de puerto.
+        Thread.sleep(2000); 
         
         // Añadir la vista del chat al sistema de gestión de vistas
         UtilsViews.addView(Main.class, "chatView", "/assets/ChatView.fxml");
@@ -69,7 +91,15 @@ public class Main extends Application {
         } catch (Exception e) {
             System.err.println("Error starting Ollama server: " + e.getMessage());
             System.err.println("Please make sure Ollama is installed and in your PATH");
-            e.printStackTrace();
+            // Mostrar un error al usuario si el servidor no puede iniciar a pesar de que 'ollama' se encontró.
+            Platform.runLater(() -> {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Ollama Server Error");
+                alert.setHeaderText("Failed to start Ollama server.");
+                alert.setContentText("An error occurred while trying to start the Ollama server. Please check if Ollama is running correctly or if there are any conflicts.\n\nError: " + e.getMessage());
+                alert.showAndWait();
+                Platform.exit();
+            });
         }
     }
 
