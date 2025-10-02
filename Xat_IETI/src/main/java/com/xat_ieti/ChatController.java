@@ -1,7 +1,6 @@
 package com.xat_ieti;
 
 import java.io.File;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -426,10 +425,13 @@ public class ChatController {
 
     private ImageView createYetiIcon() {
         try {
-            // Cargar la imagen del yeti desde assets
-            InputStream imageStream = getClass().getResourceAsStream("/assets/yeti.jpg");
-            if (imageStream != null) {
-                Image yetiImage = new Image(imageStream);
+            // Método más directo para cargar la imagen
+            String imagePath = "/assets/yeti.jpg";
+            java.net.URL imageUrl = getClass().getResource(imagePath);
+            
+            if (imageUrl != null) {
+                System.out.println("✅ Imagen encontrada: " + imageUrl.toString());
+                Image yetiImage = new Image(imageUrl.toExternalForm());
                 ImageView yetiIcon = new ImageView(yetiImage);
                 yetiIcon.setFitWidth(20);
                 yetiIcon.setFitHeight(20);
@@ -437,8 +439,18 @@ public class ChatController {
                 yetiIcon.setStyle("-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 2, 0, 1, 1);");
                 return yetiIcon;
             } else {
-                // Si no se encuentra la imagen, crear un placeholder
-                System.err.println("No se pudo cargar la imagen del yeti desde /assets/yeti.jpg");
+                System.out.println("❌ No se pudo encontrar la imagen en: " + imagePath);
+                // Verificar qué archivos hay en assets
+                try {
+                    java.nio.file.Path assetsPath = java.nio.file.Paths.get("src/main/resources/assets");
+                    if (java.nio.file.Files.exists(assetsPath)) {
+                        System.out.println("Archivos en assets:");
+                        java.nio.file.Files.list(assetsPath).forEach(file -> 
+                            System.out.println("  - " + file.getFileName()));
+                    }
+                } catch (Exception e) {
+                    System.out.println("No se pudo listar archivos: " + e.getMessage());
+                }
                 return createPlaceholderYeti();
             }
         } catch (Exception e) {
