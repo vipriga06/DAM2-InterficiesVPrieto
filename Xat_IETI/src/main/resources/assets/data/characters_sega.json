@@ -1,0 +1,122 @@
+[
+  {
+    "name": "Sonic the Hedgehog",
+    "image": "sonic.png",
+    "color": "#1E90FF",
+    "game": "Sonic the Hedgehog"
+  },
+  {
+    "name": "Miles 'Tails' Prower",
+    "image": "tails.png",
+    "color": "#FFD700",
+    "game": "Sonic the Hedgehog 2"
+  },
+  {
+    "name": "Knuckles the Echidna",
+    "image": "knuckles.png",
+    "color": "#FF4500",
+    "game": "Sonic & Knuckles"
+  },
+  {
+    "name": "Amy Rose",
+    "image": "amy.png",
+    "color": "#FF69B4",
+    "game": "Sonic CD"
+  },
+  {
+    "name": "Dr. Eggman",
+    "image": "eggman.png",
+    "color": "#B22222",
+    "game": "Sonic the Hedgehog"
+  },
+  {
+    "name": "Shadow the Hedgehog",
+    "image": "shadow.png",
+    "color": "#2F4F4F",
+    "game": "Sonic Adventure 2"
+  },
+  {
+    "name": "Blaze the Cat",
+    "image": "blaze.png",
+    "color": "#8A2BE2",
+    "game": "Sonic Rush"
+  },
+  {
+    "name": "Vector the Crocodile",
+    "image": "vector.png",
+    "color": "#228B22",
+    "game": "Knuckles' Chaotix"
+  },
+  {
+    "name": "Espio the Chameleon",
+    "image": "espio.png",
+    "color": "#9932CC",
+    "game": "Knuckles' Chaotix"
+  },
+  {
+    "name": "Charmy Bee",
+    "image": "charmy.png",
+    "color": "#FFA500",
+    "game": "Knuckles' Chaotix"
+  },
+  {
+    "name": "Axel Stone",
+    "image": "axel.png",
+    "color": "#4169E1",
+    "game": "Streets of Rage"
+  },
+  {
+    "name": "Blaze Fielding",
+    "image": "blazefielding.png",
+    "color": "#FF6347",
+    "game": "Streets of Rage"
+  },
+  {
+    "name": "Adam Hunter",
+    "image": "adam.png",
+    "color": "#FFD700",
+    "game": "Streets of Rage"
+  },
+  {
+    "name": "Gilius Thunderhead",
+    "image": "gilius.png",
+    "color": "#A9A9A9",
+    "game": "Golden Axe"
+  },
+  {
+    "name": "Tyris Flare",
+    "image": "tyris.png",
+    "color": "#FF1493",
+    "game": "Golden Axe"
+  },
+  {
+    "name": "Ax Battler",
+    "image": "ax_battler.png",
+    "color": "#4682B4",
+    "game": "Golden Axe"
+  },
+  {
+    "name": "Akira Yuki",
+    "image": "akira.png",
+    "color": "#2E8B57",
+    "game": "Virtua Fighter"
+  },
+  {
+    "name": "Pai Chan",
+    "image": "pai.png",
+    "color": "#BA55D3",
+    "game": "Virtua Fighter"
+  },
+  {
+    "name": "Ryo Hazuki",
+    "image": "ryo.png",
+    "color": "#8B4513",
+    "game": "Shenmue"
+  },
+  {
+    "name": "Beat",
+    "image": "beat.png",
+    "color": "#00CED1",
+    "game": "Jet Set Radio"
+  }
+]

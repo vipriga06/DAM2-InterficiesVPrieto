@@ -12,48 +12,48 @@ import javafx.scene.shape.Circle;
 public class ControllerItem1 {
 
     @FXML
-    private Label title;      // Per al nom del personatge
+    private Label title;      // Para el nombre del personaje
 
     @FXML
-    private Label subtitle;   // Per al nom del joc
+    private Label subtitle;   // Para el nombre del juego
 
     @FXML
-    private ImageView image;  // Imatge del personatge
+    private ImageView image;  // Imagen del personaje
 
     @FXML
-    private Circle circle;    // Cercle per mostrar el color
+    private Circle circle;    // Círculo para mostrar el color
 
-    // Estableix el títol (nom)
+    // Setea el título (nombre)
     public void setTitle(String title) {
         this.title.setText(title);
     }
 
-    // Estableix el subtítol (nom del joc)
+    // Setea el subtítulo (nombre del juego)
     public void setSubtitle(String subtitle) {
         this.subtitle.setText(subtitle);
     }
 
-    // Carrega la imatge des de ruta relativa (ha de ser ruta completa en classpath)
+    // Carga la imagen desde ruta relativa (debe ser ruta completa en classpath)
     public void setImage(String imagePath) {
         try {
             Image img = new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath)));
             this.image.setImage(img);
         } catch (NullPointerException e) {
-            System.err.println("Error carregant la imatge: " + imagePath);
+            System.err.println("Error loading image asset: " + imagePath);
             e.printStackTrace();
         }
     }
 
-    // Canvia el color de fons del cercle
+    // Cambia el color de relleno del círculo
     public void setCircleColor(String color) {
         circle.setStyle("-fx-fill: " + color);
     }
 
-    // Mètode per manejar el clic en l'ítem (opcional, si vols manejar aquí l'esdeveniment)
+    // Método para manejar el clic en el ítem (opcional, si quieres manejar aquí el evento)
     @FXML
     private void onItemClicked(MouseEvent event) {
-        // Aquí podries notificar al controlador principal o fer alguna cosa
-        // Per exemple, si usas UtilsViews per canviar vista:
+        // Aquí podrías notificar al controlador principal o hacer algo
+        // Por ejemplo, si usas UtilsViews para cambiar vista:
         // ControllerCharacter crtl = (ControllerCharacter) UtilsViews.getController("ViewCharacter");
         // crtl.setNom(title.getText());
         // crtl.setCircle(circle.getStyle());
