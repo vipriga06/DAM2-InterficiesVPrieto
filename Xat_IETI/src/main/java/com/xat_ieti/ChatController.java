@@ -429,7 +429,6 @@ public class ChatController {
             java.net.URL imageUrl = getClass().getResource(imagePath);
             
             if (imageUrl != null) {
-                System.out.println("✅ Imagen encontrada: " + imageUrl.toString());
                 Image yetiImage = new Image(imageUrl.toExternalForm());
                 ImageView yetiIcon = new ImageView(yetiImage);
                 yetiIcon.setFitWidth(20);
