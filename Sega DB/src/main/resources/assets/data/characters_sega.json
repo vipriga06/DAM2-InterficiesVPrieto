@@ -1,122 +1,318 @@
 [
+  // Personajes existentes
   {
     "name": "Sonic the Hedgehog",
     "image": "sonic.png",
     "color": "#1E90FF",
-    "game": "Sonic the Hedgehog"
+    "game": "Sonic the Hedgehog",
+    "type": "character"
   },
   {
     "name": "Miles 'Tails' Prower",
     "image": "tails.png",
     "color": "#FFD700",
-    "game": "Sonic the Hedgehog 2"
+    "game": "Sonic the Hedgehog 2",
+    "type": "character"
   },
   {
     "name": "Knuckles the Echidna",
     "image": "knuckles.png",
     "color": "#FF4500",
-    "game": "Sonic & Knuckles"
+    "game": "Sonic & Knuckles",
+    "type": "character"
   },
   {
     "name": "Amy Rose",
     "image": "amy.png",
     "color": "#FF69B4",
-    "game": "Sonic CD"
+    "game": "Sonic CD",
+    "type": "character"
   },
   {
     "name": "Dr. Eggman",
     "image": "eggman.png",
     "color": "#B22222",
-    "game": "Sonic the Hedgehog"
+    "game": "Sonic the Hedgehog",
+    "type": "character"
   },
   {
     "name": "Shadow the Hedgehog",
     "image": "shadow.png",
     "color": "#2F4F4F",
-    "game": "Sonic Adventure 2"
+    "game": "Sonic Adventure 2",
+    "type": "character"
   },
   {
     "name": "Blaze the Cat",
     "image": "blaze.png",
     "color": "#8A2BE2",
-    "game": "Sonic Rush"
+    "game": "Sonic Rush",
+    "type": "character"
   },
   {
     "name": "Vector the Crocodile",
     "image": "vector.png",
     "color": "#228B22",
-    "game": "Knuckles' Chaotix"
+    "game": "Knuckles' Chaotix",
+    "type": "character"
   },
   {
     "name": "Espio the Chameleon",
     "image": "espio.png",
     "color": "#9932CC",
-    "game": "Knuckles' Chaotix"
+    "game": "Knuckles' Chaotix",
+    "type": "character"
   },
   {
     "name": "Charmy Bee",
     "image": "charmy.png",
     "color": "#FFA500",
-    "game": "Knuckles' Chaotix"
+    "game": "Knuckles' Chaotix",
+    "type": "character"
   },
   {
     "name": "Axel Stone",
     "image": "axel.png",
     "color": "#4169E1",
-    "game": "Streets of Rage"
+    "game": "Streets of Rage",
+    "type": "character"
   },
   {
     "name": "Blaze Fielding",
     "image": "blazefielding.png",
     "color": "#FF6347",
-    "game": "Streets of Rage"
+    "game": "Streets of Rage",
+    "type": "character"
   },
   {
     "name": "Adam Hunter",
     "image": "adam.png",
     "color": "#FFD700",
-    "game": "Streets of Rage"
+    "game": "Streets of Rage",
+    "type": "character"
   },
   {
     "name": "Gilius Thunderhead",
     "image": "gilius.png",
     "color": "#A9A9A9",
-    "game": "Golden Axe"
+    "game": "Golden Axe",
+    "type": "character"
   },
   {
     "name": "Tyris Flare",
     "image": "tyris.png",
     "color": "#FF1493",
-    "game": "Golden Axe"
+    "game": "Golden Axe",
+    "type": "character"
   },
   {
     "name": "Ax Battler",
     "image": "ax_battler.png",
     "color": "#4682B4",
-    "game": "Golden Axe"
+    "game": "Golden Axe",
+    "type": "character"
   },
   {
     "name": "Akira Yuki",
     "image": "akira.png",
     "color": "#2E8B57",
-    "game": "Virtua Fighter"
+    "game": "Virtua Fighter",
+    "type": "character"
   },
   {
     "name": "Pai Chan",
     "image": "pai.png",
     "color": "#BA55D3",
-    "game": "Virtua Fighter"
+    "game": "Virtua Fighter",
+    "type": "character"
   },
   {
     "name": "Ryo Hazuki",
     "image": "ryo.png",
     "color": "#8B4513",
-    "game": "Shenmue"
+    "game": "Shenmue",
+    "type": "character"
   },
   {
     "name": "Beat",
     "image": "beat.png",
     "color": "#00CED1",
-    "game": "Jet Set Radio"
+    "game": "Jet Set Radio",
+    "type": "character"
+  },
+  {
+    "name": "Sonic the Hedgehog",
+    "image": "sonic_game.jpg",
+    "color": "#1E90FF",
+    "game": "Plataformas",
+    "type": "game"
+  },
+  {
+    "name": "Sonic the Hedgehog 2",
+    "image": "sonic2_game.jpg",
+    "color": "#FFD700",
+    "game": "Plataformas",
+    "type": "game"
+  },
+  {
+    "name": "Streets of Rage 2",
+    "image": "sor2_game.jpg",
+    "color": "#FF6347",
+    "game": "Beat 'em up",
+    "type": "game"
+  },
+  {
+    "name": "Golden Axe",
+    "image": "goldenaxe_game.jpg",
+    "color": "#228B22",
+    "game": "Hack and slash",
+    "type": "game"
+  },
+  {
+    "name": "Phantasy Star IV",
+    "image": "ps4_game.jpg",
+    "color": "#8A2BE2",
+    "game": "RPG",
+    "type": "game"
+  },
+  {
+    "name": "Shinobi III",
+    "image": "shinobi3_game.jpg",
+    "color": "#DC143C",
+    "game": "Acción",
+    "type": "game"
+  },
+  {
+    "name": "Gunstar Heroes",
+    "image": "gunstar_game.jpg",
+    "color": "#FF8C00",
+    "game": "Run and gun",
+    "type": "game"
+  },
+  {
+    "name": "Streets of Rage",
+    "image": "sor_game.jpg",
+    "color": "#4169E1",
+    "game": "Beat 'em up",
+    "type": "game"
+  },
+  {
+    "name": "Sonic & Knuckles",
+    "image": "sonicknuckles_game.jpg",
+    "color": "#FF4500",
+    "game": "Plataformas",
+    "type": "game"
+  },
+  {
+    "name": "Virtua Fighter 2",
+    "image": "vf2_game.jpg",
+    "color": "#2E8B57",
+    "game": "Lucha",
+    "type": "game"
+  },
+  {
+    "name": "Comix Zone",
+    "image": "comixzone_game.jpg",
+    "color": "#FF1493",
+    "game": "Beat 'em up",
+    "type": "game"
+  },
+  {
+    "name": "Altered Beast",
+    "image": "alteredbeast_game.jpg",
+    "color": "#8B4513",
+    "game": "Beat 'em up",
+    "type": "game"
+  },
+  {
+    "name": "Ecco the Dolphin",
+    "image": "ecco_game.jpg",
+    "color": "#00CED1",
+    "game": "Aventura",
+    "type": "game"
+  },
+  {
+    "name": "ToeJam & Earl",
+    "image": "toejam_game.jpg",
+    "color": "#9932CC",
+    "game": "Acción-Aventura",
+    "type": "game"
+  },
+  {
+    "name": "Earthworm Jim",
+    "image": "earthwormjim_game.jpg",
+    "color": "#32CD32",
+    "game": "Plataformas",
+    "type": "game"
+  },
+  {
+    "name": "Sega Master System",
+    "image": "mastersystem.jpg",
+    "color": "#FF69B4",
+    "game": "8-bit",
+    "type": "console"
+  },
+  {
+    "name": "Sega Mega Drive",
+    "image": "megadrive.jpg",
+    "color": "#2F4F4F",
+    "game": "16-bit",
+    "type": "console"
+  },
+  {
+    "name": "Sega Genesis",
+    "image": "genesis.jpg",
+    "color": "#2F4F4F",
+    "game": "16-bit",
+    "type": "console"
+  },
+  {
+    "name": "Sega Saturn",
+    "image": "saturn.jpg",
+    "color": "#A9A9A9",
+    "game": "32-bit",
+    "type": "console"
+  },
+  {
+    "name": "Sega Dreamcast",
+    "image": "dreamcast.jpg",
+    "color": "#FFD700",
+    "game": "128-bit",
+    "type": "console"
+  },
+  {
+    "name": "Sega Game Gear",
+    "image": "gamegear.jpg",
+    "color": "#00FF7F",
+    "game": "Portátil",
+    "type": "console"
+  },
+  {
+    "name": "Sega CD",
+    "image": "segacd.jpg",
+    "color": "#4682B4",
+    "game": "Add-on",
+    "type": "console"
+  },
+  {
+    "name": "Sega 32X",
+    "image": "sega32x.jpg",
+    "color": "#8B0000",
+    "game": "Add-on",
+    "type": "console"
+  },
+  {
+    "name": "Sega Nomad",
+    "image": "nomad.jpg",
+    "color": "#4B0082",
+    "game": "Portátil",
+    "type": "console"
+  },
+  {
+    "name": "Sega Pico",
+    "image": "pico.jpg",
+    "color": "#FF4500",
+    "game": "Educativa",
+    "type": "console"
   }
 ]

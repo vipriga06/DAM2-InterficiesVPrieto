@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox alignment="TOP_CENTER" prefHeight="400.0" prefWidth="300.0" 
+      xmlns="http://javafx.com/javafx/24.0.1" 
+      xmlns:fx="http://javafx.com/fxml/1" 
+      fx:controller="com.segadb.ControllerDetailMobile">
+   <children>
+      <!-- Header con botón volver -->
+      <HBox alignment="CENTER_LEFT" maxHeight="50.0" minHeight="50.0" 
+            style="-fx-background-color: rgb(0, 102, 204);" 
+            VBox.vgrow="NEVER">
+         <children>
+            <Button text="← Volver" onAction="#onBackClicked" 
+                    style="-fx-background-color: transparent; -fx-text-fill: white; -fx-border-color: white; -fx-border-width: 1px;" />
+            <Label fx:id="titleLabel" text="Detalle" textFill="WHITE" HBox.hgrow="ALWAYS">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+         </children>
+         <padding>
+            <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
+         </padding>
+      </HBox>
+
+      <!-- Contenido del detalle -->
+      <VBox alignment="CENTER" spacing="15.0" VBox.vgrow="ALWAYS">
+         <children>
+            <ImageView fx:id="detailImage" fitHeight="200.0" fitWidth="280.0" 
+                       pickOnBounds="true" preserveRatio="true" />
+            <Label fx:id="detailName" text="Nombre" textAlignment="CENTER">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Label>
+            <Label fx:id="detailGame" text="Juego" textAlignment="CENTER" 
+                   style="-fx-text-fill: #666666;">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Label>
+            <Label fx:id="detailType" text="Tipo" textAlignment="CENTER" 
+                   style="-fx-text-fill: #888888;">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+         </children>
+         <padding>
+            <Insets bottom="20.0" left="10.0" right="10.0" top="20.0" />
+         </padding>
+      </VBox>
+   </children>
+</VBox>

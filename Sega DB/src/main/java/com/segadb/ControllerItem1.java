@@ -2,6 +2,8 @@ package com.segadb;
 
 import java.util.Objects;
 
+import com.utils.UtilsViews;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -49,16 +51,20 @@ public class ControllerItem1 {
         circle.setStyle("-fx-fill: " + color);
     }
 
-    // Mètode per manejar el clic en l'ítem (opcional, si vols manejar aquí l'esdeveniment)
     @FXML
     private void onItemClicked(MouseEvent event) {
-        // Aquí podries notificar al controlador principal o fer alguna cosa
-        // Per exemple, si usas UtilsViews per canviar vista:
-        // ControllerCharacter crtl = (ControllerCharacter) UtilsViews.getController("ViewCharacter");
-        // crtl.setNom(title.getText());
-        // crtl.setCircle(circle.getStyle());
-        // crtl.setGame(subtitle.getText());
-        // crtl.setImage(image.getImage());
-        // UtilsViews.setViewAnimating("ViewCharacter");
+        // Para vista móvil, ir a vista detalle
+        if (UtilsViews.parentContainer.getScene().getWidth() < 500) {
+            try {
+                ControllerDetailMobile detailCtrl = (ControllerDetailMobile) UtilsViews.getController("ViewDetailMobile");
+                if (detailCtrl != null) {
+                    // Necesitaríamos pasar los datos del personaje aquí
+                    // Esto requeriría modificar la estructura para almacenar los datos
+                }
+                UtilsViews.setViewAnimating("ViewDetailMobile");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

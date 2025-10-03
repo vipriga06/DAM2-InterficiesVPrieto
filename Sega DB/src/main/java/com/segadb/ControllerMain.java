@@ -5,22 +5,19 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import javafx.animation.FadeTransition;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import javafx.stage.Stage;
-import javafx.util.Duration;
 
 public class ControllerMain {
 
@@ -36,45 +33,87 @@ public class ControllerMain {
     @FXML
     private Text nom1;
 
-    private List<CharacterData> characters = new ArrayList<>();
+    @FXML
+    private ChoiceBox<String> categoryChoice;
 
-    private Stage stage;
-    private Scene normalScene;
-    private Scene mobileScene;
-    private Parent normalRoot;
-    private Parent mobileRoot;
+    @FXML
+    private ChoiceBox<String> typeChoice; // Nuevo ChoiceBox para tipos
+
+    private List<CharacterData> allCharacters = new ArrayList<>();
+    private String currentFilter = "Tots";
+    private String currentType = "characters"; // Tipo por defecto
 
     @FXML
     public void initialize() {
         loadCharactersFromJson();
-        System.out.println("Personatges carregats: " + characters.size());
+        setupTypeChoice();
+        setupCategoryChoice();
+        refreshList();
+    }
 
-        try {
-            for (CharacterData character : characters) {
-                System.out.println("Carregant personatge: " + character.getName());
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/assets/subviewCharacters.fxml"));
-                AnchorPane item = loader.load(); // Canviar VBox per AnchorPane aquí
+    /**
+     * Configura el ChoiceBox con los tipos disponibles
+     */
+    private void setupTypeChoice() {
+        if (typeChoice != null) {
+            typeChoice.getItems().addAll("characters", "games", "consoles");
+            typeChoice.setValue("characters");
 
-                ControllerItem1 controllerItem = loader.getController();
-                controllerItem.setTitle(character.getName());
-                controllerItem.setSubtitle(character.getGame());
-                controllerItem.setImage("/assets/imagesTot/" + character.getImage());
-                controllerItem.setCircleColor(character.getColor());
-
-                item.setOnMouseClicked(event -> {
-                    System.out.println("Seleccionat: " + character.getName());
-                    image.setImage(new Image(getClass().getResourceAsStream("/assets/imagesTot/" + character.getImage())));
-                    nom.setText(character.getName());
-                    nom1.setText(character.getGame());
-                });
-
-                list1.getChildren().add(item);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+            typeChoice.getSelectionModel().selectedItemProperty().addListener(
+                (observable, oldValue, newValue) -> {
+                    if (newValue != null) {
+                        currentType = newValue;
+                        updateCategoryChoice();
+                        refreshList();
+                    }
+                }
+            );
         }
     }
 
+    /**
+     * Actualiza las categorías según el tipo seleccionado
+     */
+    private void updateCategoryChoice() {
+        if (categoryChoice != null) {
+            categoryChoice.getItems().clear();
+            
+            List<String> categories = allCharacters.stream()
+                .filter(c -> c.getType().equals(currentType))
+                .map(CharacterData::getGame)
+                .distinct()
+                .sorted()
+                .collect(Collectors.toList());
+
+            categoryChoice.getItems().add("Tots");
+            categoryChoice.getItems().addAll(categories);
+            categoryChoice.setValue("Tots");
+            currentFilter = "Tots";
+        }
+    }
+
+    /**
+     * Configura el ChoiceBox con las categorías disponibles
+     */
+    private void setupCategoryChoice() {
+        if (categoryChoice != null) {
+            updateCategoryChoice();
+
+            // Listener para filtrar cuando cambia la selección
+            categoryChoice.getSelectionModel().selectedItemProperty().addListener(
+                (observable, oldValue, newValue) -> {
+                    if (newValue != null) {
+                        currentFilter = newValue;
+                        refreshList();
+                    }
+                }
+            );
+        }
+    }
+
+    /**
+     * Carga los datos desde el JSON
+     */
     private void loadCharactersFromJson() {
         try (InputStream is = getClass().getResourceAsStream("/assets/data/characters_sega.json")) {
             if (is == null) {
@@ -92,65 +131,107 @@ public class ControllerMain {
             for (int i = 0; i < array.length(); i++) {
                 JSONObject obj = array.getJSONObject(i);
                 String name = obj.getString("name");
-                String image = obj.getString("image");
+                String imageFile = obj.getString("image");
                 String color = obj.getString("color");
                 String game = obj.getString("game");
+                String type = obj.getString("type"); // Nuevo campo
 
-                characters.add(new CharacterData(name, image, color, game));
+                allCharacters.add(new CharacterData(name, imageFile, color, game, type));
             }
+
+            System.out.println("Datos cargados: " + allCharacters.size());
         } catch (Exception e) {
+            System.err.println("Error cargando el archivo JSON:");
             e.printStackTrace();
         }
     }
 
-    public void setStage(Stage stage) {
-        this.stage = stage;
+    /**
+     * Refresca la lista según los filtros actuales
+     */
+    public void refreshList() {
+        if (list1 == null) return;
+
+        list1.getChildren().clear();
+
+        // Filtrar por tipo y categoría
+        List<CharacterData> filteredCharacters = allCharacters.stream()
+            .filter(c -> c.getType().equals(currentType))
+            .collect(Collectors.toList());
+
+        if (!"Tots".equals(currentFilter)) {
+            filteredCharacters = filteredCharacters.stream()
+                .filter(c -> c.getGame().equals(currentFilter))
+                .collect(Collectors.toList());
+        }
 
         try {
-            // Carregar les vistes
-            FXMLLoader normalLoader = new FXMLLoader(Main.class.getResource("/assets/viewMain.fxml"));
-            normalRoot = normalLoader.load();
-            normalScene = new Scene(normalRoot);
+            for (CharacterData character : filteredCharacters) {
+                FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/assets/subviewCharacters.fxml")
+                );
+                AnchorPane item = loader.load();
 
-            FXMLLoader mobileLoader = new FXMLLoader(Main.class.getResource("/assets/viewMainMobile.fxml"));
-            mobileRoot = mobileLoader.load();
-            mobileScene = new Scene(mobileRoot);
+                ControllerItem1 controllerItem = loader.getController();
+                controllerItem.setTitle(character.getName());
+                controllerItem.setSubtitle(character.getGame());
+                controllerItem.setImage("/assets/imagesTot/" + character.getImage());
+                controllerItem.setCircleColor(character.getColor());
 
-            // Configurar les transicions
-            FadeTransition fadeOut = new FadeTransition(Duration.millis(150));
-            fadeOut.setFromValue(1.0);
-            fadeOut.setToValue(0.0);
+                // Gestionar el clic sobre el item
+                item.setOnMouseClicked(event -> selectCharacter(character));
 
-            FadeTransition fadeIn = new FadeTransition(Duration.millis(150));
-            fadeIn.setFromValue(0.0);
-            fadeIn.setToValue(1.0);
-
-            // Afegir listener per al canvi de mida
-            stage.widthProperty().addListener((obs, oldVal, newVal) -> {
-                if (newVal.doubleValue() < 400) { // Canviat a 400
-                    if (stage.getScene() != mobileScene) {
-                        fadeOut.setNode(stage.getScene().getRoot());
-                        fadeOut.setOnFinished(e -> {
-                            stage.setScene(mobileScene);
-                            fadeIn.setNode(mobileScene.getRoot());
-                            fadeIn.play();
-                        });
-                        fadeOut.play();
-                    }
-                } else {
-                    if (stage.getScene() != normalScene) {
-                        fadeOut.setNode(stage.getScene().getRoot());
-                        fadeOut.setOnFinished(e -> {
-                            stage.setScene(normalScene);
-                            fadeIn.setNode(normalScene.getRoot());
-                            fadeIn.play();
-                        });
-                        fadeOut.play();
-                    }
-                }
-            });
+                list1.getChildren().add(item);
+            }
         } catch (Exception e) {
+            System.err.println("Error cargando los items:");
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Selecciona un elemento y actualiza la información
+     */
+    private void selectCharacter(CharacterData character) {
+        System.out.println("Seleccionado: " + character.getName());
+        
+        if (image != null) {
+            try {
+                Image img = new Image(
+                    getClass().getResourceAsStream("/assets/imagesTot/" + character.getImage())
+                );
+                image.setImage(img);
+            } catch (Exception e) {
+                System.err.println("Error cargando la imagen: " + character.getImage());
+            }
+        }
+        
+        if (nom != null) {
+            nom.setText(character.getName());
+        }
+        
+        if (nom1 != null) {
+            nom1.setText(character.getGame());
+        }
+    }
+
+    // Getters y setters para sincronización
+    public String getCurrentFilter() { return currentFilter; }
+    public String getCurrentType() { return currentType; }
+
+    public void setCurrentFilter(String filter) {
+        this.currentFilter = filter;
+        if (categoryChoice != null) {
+            categoryChoice.setValue(filter);
+        }
+        refreshList();
+    }
+
+    public void setCurrentType(String type) {
+        this.currentType = type;
+        if (typeChoice != null) {
+            typeChoice.setValue(type);
+        }
+        updateCategoryChoice();
     }
 }

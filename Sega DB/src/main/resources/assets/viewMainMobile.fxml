@@ -1,21 +1,73 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
 <VBox alignment="TOP_CENTER" prefHeight="400.0" prefWidth="300.0" 
       xmlns="http://javafx.com/javafx/24.0.1" 
       xmlns:fx="http://javafx.com/fxml/1" 
       fx:controller="com.segadb.ControllerMain">
    <children>
+      <!-- Header -->
+      <HBox alignment="CENTER" maxHeight="50.0" minHeight="50.0" 
+            style="-fx-background-color: rgb(0, 102, 204);" 
+            VBox.vgrow="NEVER">
+         <children>
+            <Label text="Sega DB" textFill="WHITE">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Label>
+         </children>
+         <padding>
+            <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
+         </padding>
+      </HBox>
+
+      <!-- Selector de tipo -->
+      <HBox alignment="CENTER" spacing="10.0">
+         <children>
+            <Label text="Tipo:">
+               <font>
+                  <Font size="12.0" />
+               </font>
+            </Label>
+            <ChoiceBox fx:id="typeChoice" prefWidth="150.0" />
+         </children>
+         <padding>
+            <Insets bottom="5.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+      </HBox>
+
+      <!-- Selector de categoria -->
+      <HBox alignment="CENTER" spacing="10.0">
+         <children>
+            <Label text="Categoria:">
+               <font>
+                  <Font size="12.0" />
+               </font>
+            </Label>
+            <ChoiceBox fx:id="categoryChoice" prefWidth="150.0" />
+         </children>
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="5.0" />
+         </padding>
+      </HBox>
+
+      <!-- Llista -->
       <ScrollPane fitToHeight="true" fitToWidth="true" VBox.vgrow="ALWAYS">
          <content>
-            <VBox fx:id="list1" alignment="TOP_CENTER" />
+            <VBox fx:id="list1" alignment="TOP_CENTER" spacing="5.0">
+               <padding>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </padding>
+            </VBox>
          </content>
-         <padding>
-            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-         </padding>
       </ScrollPane>
    </children>
 </VBox>

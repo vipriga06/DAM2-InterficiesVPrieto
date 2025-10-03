@@ -1,4 +1,5 @@
 package com.utils;
+
 import java.util.ArrayList;
 
 import javafx.animation.Interpolator;
@@ -57,7 +58,7 @@ public class UtilsViews {
                 return n.getId();
             }
         }
-        return null; // No hi ha cap vista activa
+        return null;
     }
 
     // Set visible view by its id (viewId)
