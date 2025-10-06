@@ -1,16 +1,29 @@
 package com.xat_ieti;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ProgressIndicator;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Separator;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.*;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
-import java.util.ArrayList;
-import java.util.List;
+import javafx.scene.text.FontWeight;
 
 public class ChatView {
     private final Scene scene;
@@ -24,6 +37,9 @@ public class ChatView {
     private final Button imageModeButton;
     private final ProgressIndicator thinkingIndicator;
     private final Label modeLabel;
+    private final VBox statusContainer; // Nuevo: contenedor de estado
+    private final Label statusLabel; // Nuevo: etiqueta de estado
+    private final Label connectionLabel; // Nuevo: etiqueta de conexión
     
     private final List<HBox> messageBubbles;
     private String currentAssistantMessage;
@@ -53,9 +69,21 @@ public class ChatView {
         HBox topBar = createTopBar();
         root.setTop(topBar);
 
+        // Crear contenedor principal de chat con estado
+        VBox mainChatContainer = new VBox();
+        mainChatContainer.setStyle("-fx-background-color: #1e1e1e;");
+        
+        // Crear contenedor de estado del modelo
+        statusContainer = createStatusContainer();
+        
         // Área de chat
         chatContainer = createChatContainer();
-        scrollPane = new ScrollPane(chatContainer);
+        
+        // Agregar estado y chat al contenedor principal
+        mainChatContainer.getChildren().addAll(statusContainer, chatContainer);
+        VBox.setVgrow(chatContainer, Priority.ALWAYS);
+        
+        scrollPane = new ScrollPane(mainChatContainer);
         scrollPane.setFitToWidth(true);
         scrollPane.setStyle("-fx-background: transparent; -fx-background-color: transparent;");
         root.setCenter(scrollPane);
@@ -77,8 +105,42 @@ public class ChatView {
         HBox inputBar = createInputBar();
         root.setBottom(inputBar);
 
+        // Inicializar labels de estado
+        statusLabel = (Label) ((VBox) statusContainer.getChildren().get(0)).getChildren().get(1);
+        connectionLabel = (Label) ((VBox) statusContainer.getChildren().get(0)).getChildren().get(2);
+
         scene = new Scene(root);
         applyStyles();
+        
+        // Inicializar estado
+        updateModelStatus("Initializing...", false);
+    }
+
+    private VBox createStatusContainer() {
+        VBox container = new VBox(5);
+        container.setPadding(new Insets(15, 10, 15, 10));
+        container.setAlignment(Pos.CENTER);
+        container.setStyle("-fx-background-color: #252525; -fx-border-color: #404040; -fx-border-width: 0 0 1 0;");
+        
+        VBox statusBox = new VBox(5);
+        statusBox.setAlignment(Pos.CENTER);
+        
+        Label titleLabel = new Label("🤖 Model Status");
+        titleLabel.setFont(Font.font("System", FontWeight.BOLD, 14));
+        titleLabel.setStyle("-fx-text-fill: #00d4ff;");
+        
+        Label status = new Label("Ready");
+        status.setFont(Font.font("System", 12));
+        status.setStyle("-fx-text-fill: #a0a0a0;");
+        
+        Label connection = new Label("● Disconnected");
+        connection.setFont(Font.font("System", 11));
+        connection.setStyle("-fx-text-fill: #ff4444;");
+        
+        statusBox.getChildren().addAll(titleLabel, status, connection);
+        container.getChildren().add(statusBox);
+        
+        return container;
     }
 
     private HBox createTopBar() {
@@ -131,11 +193,44 @@ public class ChatView {
         scene.getStylesheets().add("data:text/css," + css);
     }
 
+    // Nuevo método para actualizar el estado del modelo
+    public void updateModelStatus(String status, boolean connected) {
+        Platform.runLater(() -> {
+            statusLabel.setText(status);
+            
+            String connectionText = connected ? "● Connected" : "● Disconnected";
+            String connectionColor = connected ? "#44ff44" : "#ff4444";
+            connectionLabel.setText(connectionText);
+            connectionLabel.setStyle("-fx-text-fill: " + connectionColor + ";");
+            
+            // Agregar timestamp
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+            String timestamp = LocalDateTime.now().format(formatter);
+            statusLabel.setText(status + " [" + timestamp + "]");
+        });
+    }
+
+    // Nuevo método para actualizar estado durante procesamiento
+    public void updateProcessingStatus(String message) {
+        updateModelStatus("Processing: " + message, true);
+    }
+
+    // Nuevo método para actualizar estado cuando está listo
+    public void updateReadyStatus(String modelName) {
+        updateModelStatus("Ready - Model: " + modelName, true);
+    }
+
+    // Nuevo método para actualizar estado de error
+    public void updateErrorStatus(String error) {
+        updateModelStatus("Error: " + error, false);
+    }
+
     public void addUserMessage(String message) {
         Platform.runLater(() -> {
             HBox bubble = createMessageBubble(message, "user");
             chatContainer.getChildren().add(bubble);
             scrollToBottom();
+            updateProcessingStatus("Generating response...");
         });
     }
 
@@ -170,6 +265,7 @@ public class ChatView {
 
             chatContainer.getChildren().add(container);
             scrollToBottom();
+            updateProcessingStatus("Analyzing image...");
         });
     }
 
@@ -183,7 +279,6 @@ public class ChatView {
             } else {
                 currentAssistantMessage += text;
                 HBox lastBubble = messageBubbles.get(messageBubbles.size() - 1);
-                // Acceso corregido: El HBox contiene un VBox, y el VBox contiene el Label de contenido en la posición 1
                 VBox bubbleVBox = (VBox) lastBubble.getChildren().get(0);
                 Label content = (Label) bubbleVBox.getChildren().get(1);
                 content.setText(currentAssistantMessage);
@@ -194,6 +289,7 @@ public class ChatView {
 
     public void completeLastMessage() {
         currentAssistantMessage = null;
+        updateReadyStatus("gemma2:2b");
     }
 
     private HBox createMessageBubble(String message, String type) {
@@ -230,8 +326,6 @@ public class ChatView {
     }
 
     private void scrollToBottom() {
-        // Actúa sobre el ScrollPane, no sobre el VBox.
-        // Platform.runLater asegura que el scroll ocurra después de que se añada el nuevo contenido.
         Platform.runLater(() -> scrollPane.setVvalue(1.0));
     }
 

@@ -185,6 +185,15 @@ public class ChatController {
     private void processTextMessage(String message) {
         stopCurrentRequest();
         
+        // Verificar conexión con Ollama
+        if (!ollamaService.isOllamaRunning()) {
+            Platform.runLater(() -> {
+                setThinkingIndicator(false);
+                showError("Ollama server is not running.\nPlease start it with 'ollama serve' in terminal.");
+            });
+            return;
+        }
+        
         currentRequest = CompletableFuture.runAsync(() -> {
             try {
                 ollamaService.streamTextResponse(message, new OllamaService.ResponseCallback() {
