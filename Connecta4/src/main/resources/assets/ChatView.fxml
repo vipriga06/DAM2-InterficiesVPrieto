@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<StackPane xmlns="http://javafx.com/javafx"
+           xmlns:fx="http://javafx.com/fxml"
+           fx:controller="com.xat_ieti.ChatController"
+           fx:id="rootPane"
+           prefWidth="800.0" 
+           prefHeight="600.0"
+           style="-fx-background-color: #121212;">
+
+    <BorderPane fx:id="chatBorderPane">
+        <!-- Barra Superior -->
+        <top>
+            <HBox fx:id="topBar" spacing="10" alignment="CENTER_LEFT">
+                <padding>
+                    <Insets top="12" right="15" bottom="12" left="15"/>
+                </padding>
+                
+                <Label fx:id="modeLabel" text="Text Mode"/>
+                
+                <Button fx:id="textModeButton" text="Text Mode" onAction="#setTextMode"/>
+                
+                <Button fx:id="imageModeButton" text="Image Mode" onAction="#setImageMode"/>
+                
+                <Separator orientation="VERTICAL" prefHeight="20"/>
+                
+                <Button fx:id="stopButton" text="Stop" onAction="#stopCurrentRequest"/>
+                
+                <ProgressIndicator fx:id="thinkingIndicator" 
+                                 visible="false" 
+                                 prefWidth="20.0" 
+                                 prefHeight="20.0"/>
+            </HBox>
+        </top>
+
+        <!-- Área de Chat -->
+        <center>
+            <ScrollPane fx:id="scrollPane" 
+                        fitToWidth="true"
+                        style="-fx-background: transparent; -fx-background-color: transparent;"
+                        onMouseClicked="#handleChatClick">
+                <VBox fx:id="chatContainer" 
+                      spacing="10"
+                      style="-fx-background-color: #121212;"
+                      onMouseClicked="#handleChatClick">
+                    <padding>
+                        <Insets top="15" right="15" bottom="15" left="15"/>
+                    </padding>
+                </VBox>
+            </ScrollPane>
+        </center>
+
+        <!-- Barra de Entrada -->
+        <bottom>
+            <HBox fx:id="inputBar" spacing="10">
+                <padding>
+                    <Insets top="12" right="15" bottom="12" left="15"/>
+                </padding>
+                
+                <Button fx:id="uploadImageButton" text="📷" onAction="#uploadImage"
+                        style="-fx-background-radius: 8; -fx-padding: 8 12;">
+                    <tooltip>
+                        <Tooltip text="Upload Image"/>
+                    </tooltip>
+                </Button>
+                
+                <TextArea fx:id="messageInput" 
+                         prefRowCount="2" 
+                         wrapText="true" 
+                         promptText="Type your message..."
+                         onKeyPressed="#handleKeyPressed"
+                         style="-fx-background-radius: 8; -fx-border-radius: 8;"
+                         HBox.hgrow="ALWAYS"/>
+                
+                <Button fx:id="sendButton" text="Send" defaultButton="true" onAction="#sendTextMessage"
+                        style="-fx-background-color: #1976d2; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8;"/>
+            </HBox>
+        </bottom>
+    </BorderPane>
+
+</StackPane>
