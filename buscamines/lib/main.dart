@@ -60,7 +60,7 @@ class _Minesweeper {
         cheatDisplay.write(_cheatDisplay(_board[r][c]));
       }
       if (showMines) {
-        buffer.writeln('${rowDisplay.toString()}      ${cheatDisplay.toString()}');
+        buffer.writeln('${rowDisplay.toString()}${cheatDisplay.toString()}');
       } else {
         buffer.writeln(rowDisplay.toString());
       }
