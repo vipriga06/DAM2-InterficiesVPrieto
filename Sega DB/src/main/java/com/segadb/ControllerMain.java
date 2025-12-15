@@ -45,10 +45,13 @@ public class ControllerMain {
 
     @FXML
     public void initialize() {
+        System.out.println("Inicializando controlador...");
         loadCharactersFromJson();
         setupTypeChoice();
         setupCategoryChoice();
+        System.out.println("Llamando a refreshList...");
         refreshList();
+        System.out.println("RefreshList completado");
     }
 
     /**
@@ -150,23 +153,35 @@ public class ControllerMain {
      * Refresca la lista según los filtros actuales
      */
     public void refreshList() {
-        if (list1 == null) return;
+        System.out.println("refreshList llamado");
+        if (list1 == null) {
+            System.err.println("ERROR: list1 es null!");
+            return;
+        }
 
         list1.getChildren().clear();
+        System.out.println("Total personajes: " + allCharacters.size());
+        System.out.println("Tipo actual: " + currentType);
 
         // Filtrar por tipo y categoría
         List<CharacterData> filteredCharacters = allCharacters.stream()
             .filter(c -> c.getType().equals(currentType))
             .collect(Collectors.toList());
 
+        System.out.println("Personajes filtrados por tipo: " + filteredCharacters.size());
+
         if (!"Tots".equals(currentFilter)) {
             filteredCharacters = filteredCharacters.stream()
                 .filter(c -> c.getGame().equals(currentFilter))
                 .collect(Collectors.toList());
+            System.out.println("Personajes filtrados por categoría: " + filteredCharacters.size());
         }
 
+        System.out.println("Intentando cargar " + filteredCharacters.size() + " items...");
+        
         try {
             for (CharacterData character : filteredCharacters) {
+                System.out.println("Cargando: " + character.getName());
                 FXMLLoader loader = new FXMLLoader(
                     getClass().getResource("/assets/subviewCharacters.fxml")
                 );
@@ -175,14 +190,21 @@ public class ControllerMain {
                 ControllerItem1 controllerItem = loader.getController();
                 controllerItem.setTitle(character.getName());
                 controllerItem.setSubtitle(character.getGame());
-                controllerItem.setImage("/assets/imagesTot/" + character.getImage());
+                
+                String imagePath = character.getImage();
+                if (imagePath.contains("/")) {
+                    imagePath = imagePath.substring(imagePath.lastIndexOf("/") + 1);
+                }
+                controllerItem.setImage("/assets/images/" + imagePath);
                 controllerItem.setCircleColor(character.getColor());
+                controllerItem.setCharacterData(character);
 
-                // Gestionar el clic sobre el item
                 item.setOnMouseClicked(event -> selectCharacter(character));
 
                 list1.getChildren().add(item);
+                System.out.println("Item agregado a list1");
             }
+            System.out.println("Total items en list1: " + list1.getChildren().size());
         } catch (Exception e) {
             System.err.println("Error cargando los items:");
             e.printStackTrace();
@@ -197,8 +219,12 @@ public class ControllerMain {
         
         if (image != null) {
             try {
+                String imagePath = character.getImage();
+                if (imagePath.contains("/")) {
+                    imagePath = imagePath.substring(imagePath.lastIndexOf("/") + 1);
+                }
                 Image img = new Image(
-                    getClass().getResourceAsStream("/assets/images/" + character.getImage())
+                    getClass().getResourceAsStream("/assets/images/" + imagePath)
                 );
                 image.setImage(img);
             } catch (Exception e) {

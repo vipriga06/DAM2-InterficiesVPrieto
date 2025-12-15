@@ -36,8 +36,12 @@ public class ControllerDetailMobile {
             detailType.setText(currentCharacter.getType().toUpperCase());
 
             try {
+                String imagePath = currentCharacter.getImage();
+                if (imagePath.contains("/")) {
+                    imagePath = imagePath.substring(imagePath.lastIndexOf("/") + 1);
+                }
                 Image img = new Image(
-                    getClass().getResourceAsStream("/assets/images/" + currentCharacter.getImage())
+                    getClass().getResourceAsStream("/assets/images/" + imagePath)
                 );
                 detailImage.setImage(img);
             } catch (Exception e) {
