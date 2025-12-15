@@ -18,10 +18,6 @@ public class OllamaInstaller {
 
     private static final String OLLAMA_DOWNLOAD_URL = "https://ollama.com/download";
 
-    /**
-     * Verifica si Ollama está instalado y accesible en el PATH.
-     * @return true si Ollama está instalado, false en caso contrario.
-     */
     public static boolean isOllamaInstalled() {
         try {
             ProcessBuilder pb;
@@ -35,7 +31,7 @@ public class OllamaInstaller {
 
             Process process = pb.start();
             int exitCode = process.waitFor();
-            return exitCode == 0; // Si el código de salida es 0, el comando se encontró.
+            return exitCode == 0;
 
         } catch (IOException | InterruptedException e) {
             System.err.println("Error checking Ollama installation: " + e.getMessage());
@@ -43,12 +39,6 @@ public class OllamaInstaller {
         }
     }
 
-    /**
-     * Muestra un diálogo al usuario para informarle que Ollama no está instalado
-     * y le ofrece la opción de descargarlo.
-     * @return CompletableFuture<Boolean> que se completa con true si el usuario decide continuar (descargar/instalar),
-     *                                   o false si decide cancelar.
-     */
     public static CompletableFuture<Boolean> promptOllamaInstallation() {
         CompletableFuture<Boolean> result = new CompletableFuture<>();
 
@@ -64,7 +54,7 @@ public class OllamaInstaller {
             );
             
             alert.getDialogPane().setContent(content);
-            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE); // Ajustar altura del diálogo
+            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
 
             ButtonType downloadButton = new ButtonType("Go to Download Page");
             ButtonType cancelButton = new ButtonType("Exit Application");
@@ -75,9 +65,9 @@ public class OllamaInstaller {
 
             if (response.isPresent() && response.get() == downloadButton) {
                 openWebpage(OLLAMA_DOWNLOAD_URL);
-                result.complete(true); // Indica que el usuario eligió ir a la página de descarga
+                result.complete(true);
             } else {
-                result.complete(false); // Indica que el usuario eligió salir
+                result.complete(false);
             }
         });
         return result;
@@ -94,13 +84,10 @@ public class OllamaInstaller {
             if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
                 Desktop.getDesktop().browse(new URI(url));
             } else {
-                // Fallback para sistemas sin Desktop API (ej. algunos entornos headless)
                 System.out.println("Desktop API not supported. Please open " + url + " manually.");
-                // Podrías mostrar un Alert aquí también informando al usuario.
             }
         } catch (Exception e) {
             System.err.println("Error opening webpage: " + e.getMessage());
-            // Podrías mostrar un Alert aquí también informando al usuario.
         }
     }
 }

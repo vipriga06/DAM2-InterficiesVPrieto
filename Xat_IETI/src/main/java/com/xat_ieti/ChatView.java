@@ -37,9 +37,9 @@ public class ChatView {
     private final Button imageModeButton;
     private final ProgressIndicator thinkingIndicator;
     private final Label modeLabel;
-    private final VBox statusContainer; // Nuevo: contenedor de estado
-    private final Label statusLabel; // Nuevo: etiqueta de estado
-    private final Label connectionLabel; // Nuevo: etiqueta de conexión
+    private final VBox statusContainer;
+    private final Label statusLabel;
+    private final Label connectionLabel;
     
     private final List<HBox> messageBubbles;
     private String currentAssistantMessage;
@@ -47,11 +47,9 @@ public class ChatView {
     public ChatView() {
         messageBubbles = new ArrayList<>();
 
-        // Contenedor principal
         BorderPane root = new BorderPane();
         root.setPrefSize(800, 600);
 
-        // Crear componentes de la barra superior
         modeLabel = new Label("Text Mode");
         modeLabel.setStyle("-fx-text-fill: white; -fx-font-weight: bold;");
 
@@ -65,21 +63,16 @@ public class ChatView {
         thinkingIndicator.setVisible(false);
         thinkingIndicator.setPrefSize(20, 20);
 
-        // Barra superior con controles de modo
         HBox topBar = createTopBar();
         root.setTop(topBar);
 
-        // Crear contenedor principal de chat con estado
         VBox mainChatContainer = new VBox();
         mainChatContainer.setStyle("-fx-background-color: #1e1e1e;");
         
-        // Crear contenedor de estado del modelo
         statusContainer = createStatusContainer();
         
-        // Área de chat
         chatContainer = createChatContainer();
         
-        // Agregar estado y chat al contenedor principal
         mainChatContainer.getChildren().addAll(statusContainer, chatContainer);
         VBox.setVgrow(chatContainer, Priority.ALWAYS);
         
@@ -88,7 +81,6 @@ public class ChatView {
         scrollPane.setStyle("-fx-background: transparent; -fx-background-color: transparent;");
         root.setCenter(scrollPane);
 
-        // Crear componentes de la barra de entrada
         uploadImageButton = new Button("📷");
         uploadImageButton.setTooltip(new Tooltip("Upload Image"));
 
@@ -101,18 +93,15 @@ public class ChatView {
         sendButton = new Button("Send");
         sendButton.setDefaultButton(true);
 
-        // Barra inferior de entrada
         HBox inputBar = createInputBar();
         root.setBottom(inputBar);
 
-        // Inicializar labels de estado
         statusLabel = (Label) ((VBox) statusContainer.getChildren().get(0)).getChildren().get(1);
         connectionLabel = (Label) ((VBox) statusContainer.getChildren().get(0)).getChildren().get(2);
 
         scene = new Scene(root);
         applyStyles();
         
-        // Inicializar estado
         updateModelStatus("Initializing...", false);
     }
 
@@ -193,7 +182,6 @@ public class ChatView {
         scene.getStylesheets().add("data:text/css," + css);
     }
 
-    // Nuevo método para actualizar el estado del modelo
     public void updateModelStatus(String status, boolean connected) {
         Platform.runLater(() -> {
             statusLabel.setText(status);
@@ -203,24 +191,20 @@ public class ChatView {
             connectionLabel.setText(connectionText);
             connectionLabel.setStyle("-fx-text-fill: " + connectionColor + ";");
             
-            // Agregar timestamp
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
             String timestamp = LocalDateTime.now().format(formatter);
             statusLabel.setText(status + " [" + timestamp + "]");
         });
     }
 
-    // Nuevo método para actualizar estado durante procesamiento
     public void updateProcessingStatus(String message) {
         updateModelStatus("Processing: " + message, true);
     }
 
-    // Nuevo método para actualizar estado cuando está listo
     public void updateReadyStatus(String modelName) {
         updateModelStatus("Ready - Model: " + modelName, true);
     }
 
-    // Nuevo método para actualizar estado de error
     public void updateErrorStatus(String error) {
         updateModelStatus("Error: " + error, false);
     }
@@ -337,7 +321,6 @@ public class ChatView {
         modeLabel.setText(mode);
     }
 
-    // Getters
     public Scene getScene() { return scene; }
     public TextArea getMessageInput() { return messageInput; }
     public Button getSendButton() { return sendButton; }

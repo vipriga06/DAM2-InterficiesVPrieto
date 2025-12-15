@@ -33,21 +33,17 @@ public class Main extends Application {
         
         UtilsViews.addView(Main.class, "chatView", "/assets/ChatView.fxml");
         
-        // Crear la escena con el contenedor principal de UtilsViews
         Scene scene = new Scene(UtilsViews.parentContainer, 800, 600);
         
-        // Configurar y mostrar la ventana
         primaryStage.setTitle("Xat IETI");
         primaryStage.setScene(scene);
         primaryStage.setMinWidth(800);
         primaryStage.setMinHeight(600);
         
-        // Cerrar Ollama cuando se cierre la aplicación
         primaryStage.setOnCloseRequest(event -> stopOllamaServer());
         
         primaryStage.show();
         
-        // Establecer la vista del chat como activa
         UtilsViews.setView("chatView");
     }
 
@@ -55,25 +51,19 @@ public class Main extends Application {
         try {
             System.out.println("Starting Ollama server...");
             
-            // Detectar sistema operativo
             String os = System.getProperty("os.name").toLowerCase();
             ProcessBuilder processBuilder;
             
             if (os.contains("win")) {
-                // Windows
                 processBuilder = new ProcessBuilder("cmd", "/c", "ollama", "serve");
             } else if (os.contains("mac")) {
-                // macOS
                 processBuilder = new ProcessBuilder("/bin/sh", "-c", "ollama serve");
             } else {
-                // Linux
                 processBuilder = new ProcessBuilder("/bin/bash", "-c", "ollama serve");
             }
             
-            // Redirigir salida para ver logs (opcional)
             processBuilder.redirectErrorStream(true);
             
-            // Iniciar el proceso
             ollamaProcess = processBuilder.start();
             
             System.out.println("Ollama server started successfully");
@@ -81,7 +71,6 @@ public class Main extends Application {
         } catch (Exception e) {
             System.err.println("Error starting Ollama server: " + e.getMessage());
             System.err.println("Please make sure Ollama is installed and in your PATH");
-            // Mostrar un error al usuario si el servidor no puede iniciar a pesar de que 'ollama' se encontró.
             Platform.runLater(() -> {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Ollama Server Error");

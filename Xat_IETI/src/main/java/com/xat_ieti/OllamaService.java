@@ -75,7 +75,6 @@ public class OllamaService {
                 if (response.statusCode() == 200) {
                     String body = response.body();
                     
-                    // Procesar líneas JSON
                     String[] lines = body.split("\n");
                     for (String line : lines) {
                         if (!line.trim().isEmpty()) {
@@ -99,10 +98,8 @@ public class OllamaService {
 
     private void processStreamLine(String line, ResponseCallback callback) {
         try {
-            // Usar JSONObject para parsear correctamente
             JSONObject json = new JSONObject(line);
             
-            // Extraer el campo "response" si existe
             if (json.has("response")) {
                 String response = json.getString("response");
                 if (!response.isEmpty()) {
@@ -110,13 +107,11 @@ public class OllamaService {
                 }
             }
             
-            // Verificar si terminó
             if (json.has("done") && json.getBoolean("done")) {
                 System.out.println("Stream complete");
                 callback.onComplete();
             }
         } catch (Exception e) {
-            // Si falla el parseo JSON, intentar método manual como fallback
             System.err.println("JSON parsing error, trying manual parse: " + e.getMessage());
             
             if (line.contains("\"response\"")) {

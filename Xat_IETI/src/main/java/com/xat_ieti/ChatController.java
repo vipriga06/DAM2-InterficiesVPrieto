@@ -69,21 +69,16 @@ public class ChatController {
 
     @FXML
     private void initialize() {
-        // Aplicar estilos CSS
         applyStyles();
         
-        // Inicializar el modo de texto
         setTextMode();
         
-        // Hacer el chatContainer seleccionable
         makeChatSelectable();
     }
 
     private void makeChatSelectable() {
-        // Permitir selección de texto en todo el chat
-        chatContainer.setOnMouseClicked(null); // Elimina cualquier handler que impida la selección
+        chatContainer.setOnMouseClicked(null);
         
-        // Asegurar que los elementos de texto sean focusable
         Platform.runLater(() -> {
             chatContainer.setFocusTraversable(false);
         });
@@ -92,18 +87,15 @@ public class ChatController {
     private void applyStyles() {
         Platform.runLater(() -> {
             if (scrollPane.getScene() != null) {
-                // Cargar el archivo CSS externo
                 try {
                     File cssFile = new File("styles.css");
                     if (cssFile.exists()) {
                         scrollPane.getScene().getStylesheets().add(cssFile.toURI().toString());
                     } else {
-                        // Fallback: usar CSS embebido
                         String embeddedCss = getClass().getResource("/styles.css").toExternalForm();
                         scrollPane.getScene().getStylesheets().add(embeddedCss);
                     }
                 } catch (Exception e) {
-                    // CSS embebido como fallback
                     String embeddedCss = """
                         .root {
                             -fx-background-color: #121212;
@@ -185,7 +177,6 @@ public class ChatController {
     private void processTextMessage(String message) {
         stopCurrentRequest();
         
-        // Verificar conexión con Ollama
         if (!ollamaService.isOllamaRunning()) {
             Platform.runLater(() -> {
                 setThinkingIndicator(false);
@@ -260,11 +251,9 @@ public class ChatController {
                 byte[] fileContent = Files.readAllBytes(file.toPath());
                 currentImageBase64 = Base64.getEncoder().encodeToString(fileContent);
                 
-                // Mostrar imagen en el chat
                 Image image = new Image(file.toURI().toString());
                 addImageMessage(image, file.getName());
                 
-                // Cambiar a modo imagen automáticamente
                 setImageMode();
                 
             } catch (Exception e) {
@@ -353,21 +342,17 @@ public class ChatController {
                 HBox lastBubble = messageBubbles.get(messageBubbles.size() - 1);
                 VBox bubbleVBox = (VBox) lastBubble.getChildren().get(0);
                 
-                // Verificar si el último mensaje contiene código
                 if (containsCode(currentAssistantMessage)) {
-                    // Recrear la burbuja con el código completo
                     chatContainer.getChildren().remove(lastBubble);
                     HBox newBubble = createMessageBubble(currentAssistantMessage, "assistant");
                     chatContainer.getChildren().add(newBubble);
                     messageBubbles.set(messageBubbles.size() - 1, newBubble);
                 } else {
-                    // Actualizar texto normal
                     Node contentNode = (Node) bubbleVBox.getChildren().get(1);
                     if (contentNode instanceof TextArea) {
                         TextArea content = (TextArea) contentNode;
                         content.setText(currentAssistantMessage);
                         
-                        // Auto-ajustar altura
                         int lines = currentAssistantMessage.split("\n").length;
                         content.setPrefRowCount(Math.min(Math.max(lines, 1), 10));
                     }
@@ -391,26 +376,22 @@ public class ChatController {
                     (type.equals("user") ? "#007acc" : "#404040") + 
                     "; -fx-background-radius: 15; -fx-padding: 10;");
 
-        // Header con imagen para assistant o solo texto para user
         HBox headerBox = new HBox();
         headerBox.setAlignment(Pos.CENTER_LEFT);
         headerBox.setSpacing(8);
         
         if (type.equals("assistant")) {
-            // Añadir imagen de yeti para el assistant
             ImageView yetiIcon = createYetiIcon();
             Label header = new Label("Assistant");
             header.setStyle("-fx-font-weight: bold; -fx-text-fill: #a0ffa0;");
             
             headerBox.getChildren().addAll(yetiIcon, header);
         } else {
-            // Solo texto para el usuario
             Label header = new Label("You");
             header.setStyle("-fx-font-weight: bold; -fx-text-fill: #a0d0ff;");
             headerBox.getChildren().add(header);
         }
 
-        // Detectar si el mensaje contiene código
         if (containsCode(message)) {
             VBox contentBox = createCodeBlock(message, type);
             bubble.getChildren().addAll(headerBox, contentBox);
@@ -433,7 +414,6 @@ public class ChatController {
 
     private ImageView createYetiIcon() {
         try {
-            // Método más directo para cargar la imagen
             String imagePath = "/assets/ieti.jpg";
             java.net.URL imageUrl = getClass().getResource(imagePath);
             
@@ -447,7 +427,6 @@ public class ChatController {
                 return yetiIcon;
             } else {
                 System.out.println("❌ No se pudo encontrar la imagen en: " + imagePath);
-                // Verificar qué archivos hay en assets
                 try {
                     java.nio.file.Path assetsPath = java.nio.file.Paths.get("src/main/resources/assets");
                     if (java.nio.file.Files.exists(assetsPath)) {
@@ -467,11 +446,9 @@ public class ChatController {
     }
 
     private ImageView createPlaceholderYeti() {
-        // Crear un círculo azul como placeholder si no hay imagen
         Circle placeholder = new Circle(10);
         placeholder.setFill(Color.LIGHTBLUE);
         
-        // Convertir el círculo a ImageView
         WritableImage image = new WritableImage(20, 20);
         SnapshotParameters params = new SnapshotParameters();
         params.setFill(Color.TRANSPARENT);
@@ -498,7 +475,6 @@ public class ChatController {
                         "-fx-font-size: 14px; " +
                         "-fx-padding: 0;");
         
-        // Auto-ajustar altura
         textArea.textProperty().addListener((observable, oldValue, newValue) -> {
             int lines = newValue.split("\n").length;
             textArea.setPrefRowCount(Math.min(Math.max(lines, 1), 10));
@@ -508,7 +484,6 @@ public class ChatController {
     }
 
     private boolean containsCode(String message) {
-        // Detectar patrones comunes de código
         return message.contains("```") || 
             message.contains("\\u003c") ||
             message.matches(".*(public|class|function|def|import|package).*") ||
@@ -520,7 +495,6 @@ public class ChatController {
         VBox codeContainer = new VBox(5);
         codeContainer.getStyleClass().add("code-block");
         
-        // Header con lenguaje y botón de copiar
         HBox headerBox = new HBox();
         headerBox.setAlignment(Pos.CENTER_LEFT);
         headerBox.setSpacing(10);
@@ -535,7 +509,6 @@ public class ChatController {
         HBox.setHgrow(languageLabel, Priority.ALWAYS);
         headerBox.getChildren().addAll(languageLabel, copyButton);
         
-        // Área de texto para el código (ya es seleccionable por defecto)
         String codeContent = extractCodeContent(message);
         TextArea codeArea = new TextArea(codeContent);
         codeArea.setEditable(false);
@@ -548,7 +521,6 @@ public class ChatController {
                         "-fx-border-color: #404040; " +
                         "-fx-border-radius: 4;");
         
-        // Auto-ajustar altura según el contenido
         int lineCount = codeContent.split("\n").length;
         codeArea.setPrefRowCount(Math.min(Math.max(lineCount, 3), 15));
         
@@ -566,7 +538,6 @@ public class ChatController {
     }
 
     private String extractCodeContent(String message) {
-        // Limpiar el código de caracteres escapados y formato
         String cleaned = message
             .replace("\\u003c", "<")
             .replace("\\u003e", ">")
@@ -575,11 +546,9 @@ public class ChatController {
             .replace("\\n", "\n")
             .replace("\\t", "\t");
         
-        // Extraer código entre ``` si existe
         if (cleaned.contains("```")) {
             String[] parts = cleaned.split("```");
             if (parts.length >= 2) {
-                // Remover el lenguaje si está especificado
                 String code = parts[1].trim();
                 if (code.contains("\n")) {
                     int firstNewline = code.indexOf("\n");
@@ -596,7 +565,7 @@ public class ChatController {
 
     private int calculateRowCount(String code) {
         int lines = code.split("\n").length;
-        return Math.min(Math.max(lines, 3), 15); // Mínimo 3, máximo 15 líneas
+        return Math.min(Math.max(lines, 3), 15);
     }
 
     private void copyToClipboard(String text) {
@@ -605,7 +574,6 @@ public class ChatController {
         content.putString(text);
         clipboard.setContent(content);
         
-        // Mostrar confirmación
         showNotification("Code copied to clipboard!");
     }
 
@@ -615,7 +583,6 @@ public class ChatController {
             tooltip.setAutoHide(true);
             tooltip.show(sendButton.getScene().getWindow());
             
-            // Auto-ocultar después de 2 segundos
             PauseTransition delay = new PauseTransition(Duration.seconds(2));
             delay.setOnFinished(e -> tooltip.hide());
             delay.play();
@@ -624,7 +591,6 @@ public class ChatController {
 
     @FXML
     private void handleChatClick(MouseEvent event) {
-        // Permite hacer clic en el área del chat sin afectar la selección de texto
         event.consume();
     }
 
