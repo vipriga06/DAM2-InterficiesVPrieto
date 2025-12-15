@@ -336,40 +336,39 @@ public class ChatController {
     }
 
     private void updateLastAssistantMessagePreview(String text) {
-        if (messageBubbles.isEmpty()) {
-            Platform.runLater(() -> {
-                HBox bubble = createMessageBubble(text, "assistant");
+        Platform.runLater(() -> {
+            if (messageBubbles.isEmpty()) {
+                HBox bubble = createFinalMessageBubble(text, "assistant");
                 chatContainer.getChildren().add(bubble);
                 messageBubbles.add(bubble);
-                scrollToBottom();
-            });
-        } else {
-            Platform.runLater(() -> {
-                HBox lastBubble = messageBubbles.get(messageBubbles.size() - 1);
-                VBox bubbleVBox = (VBox) lastBubble.getChildren().get(0);
+            } else {
+                int lastIndex = messageBubbles.size() - 1;
+                HBox lastBubble = messageBubbles.get(lastIndex);
                 
-                if (bubbleVBox.getChildren().size() > 1) {
-                    Node contentNode = bubbleVBox.getChildren().get(1);
-                    if (contentNode instanceof Label) {
-                        Label content = (Label) contentNode;
-                        content.setText(text);
+                if (lastBubble.getChildren().size() > 0) {
+                    VBox bubbleVBox = (VBox) lastBubble.getChildren().get(0);
+                    if (bubbleVBox.getChildren().size() > 1) {
+                        Node contentNode = bubbleVBox.getChildren().get(1);
+                        if (contentNode instanceof Label) {
+                            Label content = (Label) contentNode;
+                            content.setText(text);
+                        }
                     }
                 }
-                scrollToBottom();
-            });
-        }
+            }
+            scrollToBottom();
+        });
     }
 
     private void completeLastMessage(String finalMessage) {
         Platform.runLater(() -> {
             if (!messageBubbles.isEmpty()) {
-                HBox lastBubble = messageBubbles.get(messageBubbles.size() - 1);
-                chatContainer.getChildren().remove(lastBubble);
-                messageBubbles.remove(messageBubbles.size() - 1);
-                
-                HBox newBubble = createFinalMessageBubble(finalMessage, "assistant");
-                chatContainer.getChildren().add(newBubble);
-                messageBubbles.add(newBubble);
+                int lastIndex = messageBubbles.size() - 1;
+                if (lastIndex < chatContainer.getChildren().size()) {
+                    HBox newBubble = createFinalMessageBubble(finalMessage, "assistant");
+                    chatContainer.getChildren().set(lastIndex, newBubble);
+                    messageBubbles.set(lastIndex, newBubble);
+                }
             }
             currentAssistantMessage = null;
             scrollToBottom();
