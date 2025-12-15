@@ -8,42 +8,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:buscamines/main.dart';
-
-/// Minimal MyApp implementation for the test environment.
-/// This ensures the test can locate a MyApp class that provides
-/// a counter starting at 0 and a FloatingActionButton with Icons.add
-/// that increments the counter to 1 when tapped.
-class MyApp extends StatefulWidget {
-  const MyApp({Key? key}) : super(key: key);
-
-  @override
-  State<MyApp> createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  int _counter = 0;
-
-  void _increment() {
-    setState(() {
-      _counter++;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(title: const Text('Test App')),
-        body: Center(child: Text('$_counter')),
-        floatingActionButton: FloatingActionButton(
-          onPressed: _increment,
-          child: const Icon(Icons.add),
-        ),
-      ),
-    );
-  }
-}
+import 'package:betisdb/main.dart';
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
