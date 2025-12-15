@@ -187,17 +187,22 @@ public class ChatController {
         
         currentRequest = CompletableFuture.runAsync(() -> {
             try {
+                StringBuilder fullMessage = new StringBuilder();
                 ollamaService.streamTextResponse(message, new OllamaService.ResponseCallback() {
                     @Override
                     public void onChunkReceived(String chunk) {
-                        Platform.runLater(() -> appendToLastAssistantMessage(chunk));
+                        fullMessage.append(chunk);
+                        Platform.runLater(() -> {
+                            setThinkingIndicator(false);
+                            updateLastAssistantMessagePreview(fullMessage.toString());
+                        });
                     }
 
                     @Override
                     public void onComplete() {
                         Platform.runLater(() -> {
                             setThinkingIndicator(false);
-                            completeLastMessage();
+                            completeLastMessage(fullMessage.toString());
                         });
                     }
 
@@ -330,40 +335,93 @@ public class ChatController {
         });
     }
 
-    private void appendToLastAssistantMessage(String text) {
-        Platform.runLater(() -> {
-            if (currentAssistantMessage == null) {
-                currentAssistantMessage = text;
+    private void updateLastAssistantMessagePreview(String text) {
+        if (messageBubbles.isEmpty()) {
+            Platform.runLater(() -> {
                 HBox bubble = createMessageBubble(text, "assistant");
                 chatContainer.getChildren().add(bubble);
                 messageBubbles.add(bubble);
-            } else {
-                currentAssistantMessage += text;
+                scrollToBottom();
+            });
+        } else {
+            Platform.runLater(() -> {
                 HBox lastBubble = messageBubbles.get(messageBubbles.size() - 1);
                 VBox bubbleVBox = (VBox) lastBubble.getChildren().get(0);
                 
-                if (containsCode(currentAssistantMessage)) {
-                    chatContainer.getChildren().remove(lastBubble);
-                    HBox newBubble = createMessageBubble(currentAssistantMessage, "assistant");
-                    chatContainer.getChildren().add(newBubble);
-                    messageBubbles.set(messageBubbles.size() - 1, newBubble);
-                } else {
-                    Node contentNode = (Node) bubbleVBox.getChildren().get(1);
-                    if (contentNode instanceof TextArea) {
-                        TextArea content = (TextArea) contentNode;
-                        content.setText(currentAssistantMessage);
-                        
-                        int lines = currentAssistantMessage.split("\n").length;
-                        content.setPrefRowCount(Math.min(Math.max(lines, 1), 10));
+                if (bubbleVBox.getChildren().size() > 1) {
+                    Node contentNode = bubbleVBox.getChildren().get(1);
+                    if (contentNode instanceof Label) {
+                        Label content = (Label) contentNode;
+                        content.setText(text);
                     }
                 }
+                scrollToBottom();
+            });
+        }
+    }
+
+    private void completeLastMessage(String finalMessage) {
+        Platform.runLater(() -> {
+            if (!messageBubbles.isEmpty()) {
+                HBox lastBubble = messageBubbles.get(messageBubbles.size() - 1);
+                chatContainer.getChildren().remove(lastBubble);
+                messageBubbles.remove(messageBubbles.size() - 1);
+                
+                HBox newBubble = createFinalMessageBubble(finalMessage, "assistant");
+                chatContainer.getChildren().add(newBubble);
+                messageBubbles.add(newBubble);
             }
+            currentAssistantMessage = null;
             scrollToBottom();
         });
     }
 
-    private void completeLastMessage() {
-        currentAssistantMessage = null;
+    private HBox createFinalMessageBubble(String message, String type) {
+        HBox container = new HBox();
+        container.setPadding(new Insets(5));
+        
+        VBox bubble = new VBox(5);
+        bubble.setMaxWidth(600);
+        bubble.setStyle("-fx-background-color: " + 
+                    (type.equals("user") ? "#007acc" : "#404040") + 
+                    "; -fx-background-radius: 15; -fx-padding: 10;");
+
+        HBox headerBox = new HBox();
+        headerBox.setAlignment(Pos.CENTER_LEFT);
+        headerBox.setSpacing(8);
+        
+        if (type.equals("assistant")) {
+            ImageView yetiIcon = createYetiIcon();
+            Label header = new Label("Assistant");
+            header.setStyle("-fx-font-weight: bold; -fx-text-fill: #a0ffa0;");
+            
+            headerBox.getChildren().addAll(yetiIcon, header);
+        } else {
+            Label header = new Label("You");
+            header.setStyle("-fx-font-weight: bold; -fx-text-fill: #a0d0ff;");
+            headerBox.getChildren().add(header);
+        }
+
+        if (containsCode(message)) {
+            VBox contentBox = createCodeBlock(message, type);
+            bubble.getChildren().addAll(headerBox, contentBox);
+        } else {
+            Label textLabel = new Label(message);
+            textLabel.setWrapText(true);
+            textLabel.setStyle("-fx-text-fill: white; -fx-font-size: 14px;");
+            bubble.getChildren().addAll(headerBox, textLabel);
+        }
+        
+        if (type.equals("user")) {
+            container.setAlignment(Pos.CENTER_RIGHT);
+            HBox.setHgrow(container, Priority.ALWAYS);
+        } else {
+            container.setAlignment(Pos.CENTER_LEFT);
+            HBox.setHgrow(container, Priority.ALWAYS);
+        }
+        
+        container.getChildren().add(bubble);
+        return container;
     }
 
     private HBox createMessageBubble(String message, String type) {
@@ -396,8 +454,10 @@ public class ChatController {
             VBox contentBox = createCodeBlock(message, type);
             bubble.getChildren().addAll(headerBox, contentBox);
         } else {
-            TextArea textArea = createSelectableTextArea(message);
-            bubble.getChildren().addAll(headerBox, textArea);
+            Label textLabel = new Label(message);
+            textLabel.setWrapText(true);
+            textLabel.setStyle("-fx-text-fill: white; -fx-font-size: 14px;");
+            bubble.getChildren().addAll(headerBox, textLabel);
         }
         
         if (type.equals("user")) {
@@ -461,26 +521,6 @@ public class ChatController {
         placeholderIcon.setFitHeight(20);
         
         return placeholderIcon;
-    }
-
-    private TextArea createSelectableTextArea(String text) {
-        TextArea textArea = new TextArea(text);
-        textArea.setEditable(false);
-        textArea.setWrapText(true);
-        textArea.setPrefRowCount(1);
-        textArea.setStyle("-fx-control-inner-background: transparent; " +
-                        "-fx-background-color: transparent; " +
-                        "-fx-border-color: transparent; " +
-                        "-fx-text-fill: white; " +
-                        "-fx-font-size: 14px; " +
-                        "-fx-padding: 0;");
-        
-        textArea.textProperty().addListener((observable, oldValue, newValue) -> {
-            int lines = newValue.split("\n").length;
-            textArea.setPrefRowCount(Math.min(Math.max(lines, 1), 10));
-        });
-        
-        return textArea;
     }
 
     private boolean containsCode(String message) {
