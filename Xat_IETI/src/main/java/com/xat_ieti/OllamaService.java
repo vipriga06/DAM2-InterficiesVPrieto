@@ -11,7 +11,7 @@ import org.json.JSONObject;
 public class OllamaService {
     private static final String OLLAMA_BASE_URL = "http://localhost:11434";
     private static final String TEXT_MODEL = "gemma3:1b";
-    private static final String IMAGE_MODEL = "llava-phi3";
+    private static final String IMAGE_MODEL = "llava";
     private final HttpClient httpClient;
 
     public OllamaService() {
