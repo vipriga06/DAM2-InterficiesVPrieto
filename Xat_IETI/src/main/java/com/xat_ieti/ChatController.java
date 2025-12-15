@@ -297,6 +297,7 @@ public class ChatController {
         Platform.runLater(() -> {
             HBox bubble = createMessageBubble(message, "user");
             chatContainer.getChildren().add(bubble);
+            messageBubbles.add(bubble);
             scrollToBottom();
         });
     }
@@ -305,6 +306,7 @@ public class ChatController {
         Platform.runLater(() -> {
             HBox bubble = createMessageBubble(message, "assistant");
             chatContainer.getChildren().add(bubble);
+            messageBubbles.add(bubble);
             scrollToBottom();
         });
     }
@@ -337,38 +339,50 @@ public class ChatController {
 
     private void updateLastAssistantMessagePreview(String text) {
         Platform.runLater(() -> {
-            if (messageBubbles.isEmpty()) {
-                HBox bubble = createFinalMessageBubble(text, "assistant");
-                chatContainer.getChildren().add(bubble);
-                messageBubbles.add(bubble);
-            } else {
-                int lastIndex = messageBubbles.size() - 1;
-                HBox lastBubble = messageBubbles.get(lastIndex);
+            if (!messageBubbles.isEmpty()) {
+                HBox lastBubble = messageBubbles.get(messageBubbles.size() - 1);
+                Node firstChild = lastBubble.getChildren().get(0);
                 
-                if (lastBubble.getChildren().size() > 0) {
-                    VBox bubbleVBox = (VBox) lastBubble.getChildren().get(0);
+                if (firstChild instanceof VBox) {
+                    VBox bubbleVBox = (VBox) firstChild;
                     if (bubbleVBox.getChildren().size() > 1) {
                         Node contentNode = bubbleVBox.getChildren().get(1);
-                        if (contentNode instanceof Label) {
+                        if (contentNode instanceof Label && bubbleVBox.getStyle().contains("#404040")) {
                             Label content = (Label) contentNode;
                             content.setText(text);
+                            content.setWrapText(true);
+                            return;
                         }
                     }
                 }
             }
+            
+            HBox bubble = createFinalMessageBubble(text, "assistant");
+            chatContainer.getChildren().add(bubble);
+            messageBubbles.add(bubble);
             scrollToBottom();
         });
+    }
+
+    private void updateBubbleContent(HBox bubble, String text) {
+        if (bubble.getChildren().size() > 0) {
+            VBox bubbleVBox = (VBox) bubble.getChildren().get(0);
+            if (bubbleVBox.getChildren().size() > 1) {
+                Node contentNode = bubbleVBox.getChildren().get(1);
+                if (contentNode instanceof Label) {
+                    Label content = (Label) contentNode;
+                    content.setText(text);
+                    content.setWrapText(true);
+                }
+            }
+        }
     }
 
     private void completeLastMessage(String finalMessage) {
         Platform.runLater(() -> {
             if (!messageBubbles.isEmpty()) {
-                int lastIndex = messageBubbles.size() - 1;
-                if (lastIndex < chatContainer.getChildren().size()) {
-                    HBox newBubble = createFinalMessageBubble(finalMessage, "assistant");
-                    chatContainer.getChildren().set(lastIndex, newBubble);
-                    messageBubbles.set(lastIndex, newBubble);
-                }
+                HBox lastBubble = messageBubbles.get(messageBubbles.size() - 1);
+                updateBubbleContent(lastBubble, finalMessage);
             }
             currentAssistantMessage = null;
             scrollToBottom();
