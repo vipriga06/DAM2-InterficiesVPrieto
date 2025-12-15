@@ -37,7 +37,7 @@ public class ControllerDetailMobile {
 
             try {
                 Image img = new Image(
-                    getClass().getResourceAsStream("/assets/imagesTot/" + currentCharacter.getImage())
+                    getClass().getResourceAsStream("/assets/images/" + currentCharacter.getImage())
                 );
                 detailImage.setImage(img);
             } catch (Exception e) {

@@ -198,7 +198,7 @@ public class ControllerMain {
         if (image != null) {
             try {
                 Image img = new Image(
-                    getClass().getResourceAsStream("/assets/imagesTot/" + character.getImage())
+                    getClass().getResourceAsStream("/assets/images/" + character.getImage())
                 );
                 image.setImage(img);
             } catch (Exception e) {

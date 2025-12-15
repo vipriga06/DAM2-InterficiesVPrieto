@@ -55,21 +55,6 @@
                   <!-- Panel izquierdo - Lista -->
                   <VBox alignment="CENTER" prefHeight="331.0" prefWidth="362.0" spacing="10.0">
                      <children>
-                        <!-- Selector de categoría -->
-                        <HBox alignment="CENTER" spacing="10.0">
-                           <children>
-                              <Label text="Categoria:">
-                                 <font>
-                                    <Font size="12.0" />
-                                 </font>
-                              </Label>
-                              <ChoiceBox fx:id="categoryChoice" prefWidth="200.0" />
-                           </children>
-                           <padding>
-                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                           </padding>
-                        </HBox>
-
                         <!-- Lista de personajes -->
                         <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="400.0" prefWidth="300.0">
                            <content>

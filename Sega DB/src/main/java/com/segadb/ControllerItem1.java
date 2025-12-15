@@ -25,6 +25,12 @@ public class ControllerItem1 {
     @FXML
     private Circle circle;    // Cercle per mostrar el color
 
+    private CharacterData characterData;
+
+    public void setCharacterData(CharacterData data) {
+        this.characterData = data;
+    }
+
     // Estableix el títol (nom)
     public void setTitle(String title) {
         this.title.setText(title);
@@ -53,13 +59,11 @@ public class ControllerItem1 {
 
     @FXML
     private void onItemClicked(MouseEvent event) {
-        // Para vista móvil, ir a vista detalle
-        if (UtilsViews.parentContainer.getScene().getWidth() < 500) {
+        if (UtilsViews.parentContainer.getScene().getWidth() < 500 && characterData != null) {
             try {
                 ControllerDetailMobile detailCtrl = (ControllerDetailMobile) UtilsViews.getController("ViewDetailMobile");
                 if (detailCtrl != null) {
-                    // Necesitaríamos pasar los datos del personaje aquí
-                    // Esto requeriría modificar la estructura para almacenar los datos
+                    detailCtrl.setCharacterData(characterData);
                 }
                 UtilsViews.setViewAnimating("ViewDetailMobile");
             } catch (Exception e) {

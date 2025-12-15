@@ -16,7 +16,7 @@ public class Main extends Application {
             // Añadir vistas
             UtilsViews.addView(Main.class, "ViewMain", "/assets/viewMain.fxml");
             UtilsViews.addView(Main.class, "ViewMainMobile", "/assets/viewMainMobile.fxml");
-            UtilsViews.addView(Main.class, "ViewDetailMobile", "/assets/ViewDetailMobile.fxml");
+            UtilsViews.addView(Main.class, "ViewDetailMobile", "/assets/viewDetailMobile.fxml");
 
             // Crear escena
             Scene scene = new Scene(UtilsViews.parentContainer, 700, 400);
