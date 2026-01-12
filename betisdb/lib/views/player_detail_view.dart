@@ -17,7 +17,7 @@ class PlayerDetailView extends StatefulWidget {
 }
 
 class _PlayerDetailViewState extends State<PlayerDetailView> {
-  late Future<Player> _playerDetail;
+  late Future<Player?> _playerDetail;
 
   @override
   void initState() {
@@ -33,14 +33,14 @@ class _PlayerDetailViewState extends State<PlayerDetailView> {
         backgroundColor: Colors.green[800],
         elevation: 0,
       ),
-      body: FutureBuilder<Player>(
+      body: FutureBuilder<Player?>(
         future: _playerDetail,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (!snapshot.hasData) {
+          } else if (!snapshot.hasData || snapshot.data == null) {
             return const Center(child: Text('No hay datos disponibles'));
           }
 
@@ -53,20 +53,47 @@ class _PlayerDetailViewState extends State<PlayerDetailView> {
                 Container(
                   height: 300,
                   decoration: BoxDecoration(
-                    color: Colors.green[200],
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [Colors.green[700]!, Colors.green[900]!],
+                    ),
                   ),
-                  child: Image.network(
-                    ApiService.getImageUrl(player.imageUrl),
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Center(
-                        child: Icon(
-                          Icons.person,
-                          size: 100,
-                          color: Colors.green[800],
+                  child: Center(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(150),
+                      child: Container(
+                        width: 200,
+                        height: 200,
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.2),
+                          shape: BoxShape.circle,
                         ),
-                      );
-                    },
+                        child: Image.network(
+                          ApiService.getImageUrl(player.imageUrl),
+                          fit: BoxFit.cover,
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return Center(
+                              child: Icon(
+                                Icons.person,
+                                size: 120,
+                                color: Colors.white,
+                              ),
+                            );
+                          },
+                          errorBuilder: (context, error, stackTrace) {
+                            return Center(
+                              child: Icon(
+                                Icons.person,
+                                size: 120,
+                                color: Colors.white,
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
                   ),
                 ),
                 Padding(
