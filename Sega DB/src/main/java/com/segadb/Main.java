@@ -31,17 +31,23 @@ public class Main extends Application {
                 if (newIsMobile != isMobileView) {
                     isMobileView = newIsMobile;
                     
+                    ControllerMain currentController = (ControllerMain) UtilsViews.getController(isMobileView ? "ViewMain" : "ViewMainMobile");
+                    String filterToPreserve = currentController != null ? currentController.getCurrentFilter() : "Tots";
+                    String typeToPreserve = currentController != null ? currentController.getCurrentType() : "character";
+                    
                     if (newIsMobile) {
                         UtilsViews.setView("ViewMainMobile");
-                        ControllerMain controller = (ControllerMain) UtilsViews.getController("ViewMainMobile");
-                        if (controller != null) {
-                            controller.refreshList();
+                        ControllerMain mobileController = (ControllerMain) UtilsViews.getController("ViewMainMobile");
+                        if (mobileController != null) {
+                            mobileController.setCurrentType(typeToPreserve);
+                            mobileController.setCurrentFilter(filterToPreserve);
                         }
                     } else {
                         UtilsViews.setView("ViewMain");
-                        ControllerMain controller = (ControllerMain) UtilsViews.getController("ViewMain");
-                        if (controller != null) {
-                            controller.refreshList();
+                        ControllerMain desktopController = (ControllerMain) UtilsViews.getController("ViewMain");
+                        if (desktopController != null) {
+                            desktopController.setCurrentType(typeToPreserve);
+                            desktopController.setCurrentFilter(filterToPreserve);
                         }
                     }
                 }
