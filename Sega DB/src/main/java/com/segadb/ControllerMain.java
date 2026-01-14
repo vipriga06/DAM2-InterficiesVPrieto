@@ -93,7 +93,6 @@ public class ControllerMain {
         if (categoryChoice != null) {
             updateCategoryChoice();
 
-            // Listener para filtrar cuando cambia la selección
             categoryChoice.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> {
                     if (newValue != null) {
@@ -152,7 +151,7 @@ public class ControllerMain {
             .filter(c -> c.getType().equals(currentType))
             .collect(Collectors.toList());
 
-        System.out.println("Personajes filtrados por tipo: " + filteredCharacters.size());
+        System.out.println("Elements filtrats per tipus: " + filteredCharacters.size());
 
         if (!"Tots".equals(currentFilter)) {
             filteredCharacters = filteredCharacters.stream()
