@@ -13,12 +13,10 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         try {
-            // Añadir vistas
             UtilsViews.addView(Main.class, "ViewMain", "/assets/viewMain.fxml");
             UtilsViews.addView(Main.class, "ViewMainMobile", "/assets/viewMainMobile.fxml");
             UtilsViews.addView(Main.class, "ViewDetailMobile", "/assets/viewDetailMobile.fxml");
 
-            // Crear escena
             Scene scene = new Scene(UtilsViews.parentContainer, 700, 400);
             
             stage.setTitle("Sega DB");
@@ -27,24 +25,20 @@ public class Main extends Application {
             stage.setMinHeight(400);
             stage.show();
 
-            // Configurar listener mejorado para cambiar vista
             stage.widthProperty().addListener((obs, oldVal, newVal) -> {
                 boolean newIsMobile = newVal.doubleValue() < 500;
                 
-                // Solo cambiar si hay un cambio real en el tipo de vista
                 if (newIsMobile != isMobileView) {
                     isMobileView = newIsMobile;
                     
                     if (newIsMobile) {
-                        // Cambiar a vista móvil
-                        UtilsViews.setView("ViewMainMobile"); // Sin animación para evitar tirones
+                        UtilsViews.setView("ViewMainMobile");
                         ControllerMain controller = (ControllerMain) UtilsViews.getController("ViewMainMobile");
                         if (controller != null) {
                             controller.refreshList();
                         }
                     } else {
-                        // Cambiar a vista normal
-                        UtilsViews.setView("ViewMain"); // Sin animación para evitar tirones
+                        UtilsViews.setView("ViewMain");
                         ControllerMain controller = (ControllerMain) UtilsViews.getController("ViewMain");
                         if (controller != null) {
                             controller.refreshList();
@@ -53,7 +47,6 @@ public class Main extends Application {
                 }
             });
 
-            // Inicializar con la vista correcta
             isMobileView = stage.getWidth() < 500;
             if (isMobileView) {
                 UtilsViews.setView("ViewMainMobile");

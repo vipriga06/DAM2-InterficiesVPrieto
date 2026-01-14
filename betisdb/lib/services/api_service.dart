@@ -4,8 +4,8 @@ import '../models/category.dart';
 import '../models/player.dart';
 
 class ApiService {
-  // Usar API de Transfermark en lugar de datos locales
-  static const bool useLocalData = false;
+  // Usar datos locales con imágenes reales de Transfermark
+  static const bool useLocalData = true;
   static const String baseUrl = 'http://127.0.0.1:3000';
   static const String transfermarktApiUrl = 'https://transfermarkt-api.fly.dev';
   static const String realBetisClubId = '23'; // ID del Real Betis en Transfermark
@@ -432,72 +432,61 @@ class ApiService {
 
   // Obtener categorías
   static Future<List<Category>> getCategories() async {
-    if (useLocalData) {
-      return _categoriesData
-          .map((item) => Category.fromJson(item))
-          .toList();
-    }
-
-    try {
-      final response = await http.get(Uri.parse('$baseUrl/api/categories'));
-      if (response.statusCode == 200) {
-        final List<dynamic> data = json.decode(response.body);
-        return data.map((item) => Category.fromJson(item)).toList();
-      } else {
-        throw Exception('Error al cargar categorías');
-      }
-    } catch (e) {
-      throw Exception('Error: $e');
-    }
+    // Siempre usar datos locales para categorías
+    return _categoriesData
+        .map((item) => Category.fromJson(item))
+        .toList();
   }
 
   // Obtener jugadores por categoría
   static Future<List<Player>> getPlayersByCategory(String categoryId) async {
-    if (useLocalData) {
-      final players = _playersData
-          .where((p) => p['category'] == categoryId)
-          .toList();
-      return players.map((item) => Player.fromJson(item)).toList();
-    }
-
+    // Usar datos locales con imágenes de la API cuando sea necesario
     try {
-      // Obtener todos los jugadores del Real Betis desde la API de Transfermark
-      final response = await http.get(
-        Uri.parse('$transfermarktApiUrl/clubs/$realBetisClubId/players'),
-      );
+      // Intentar obtener jugadores de la API primero
+      if (!useLocalData) {
+        final response = await http.get(
+          Uri.parse('$transfermarktApiUrl/clubs/$realBetisClubId/players'),
+          headers: {'Accept': 'application/json'},
+        ).timeout(const Duration(seconds: 10));
 
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        final List<dynamic> players = data['players'] ?? [];
+        if (response.statusCode == 200) {
+          final data = json.decode(response.body);
+          final List<dynamic> players = data['players'] ?? data['squad'] ?? [];
 
-        // Filtrar por categoría/posición
-        final filteredPlayers = players.where((player) {
-          final position = (player['position'] ?? '').toString().toLowerCase();
-          return _matchesCategory(position, categoryId);
-        }).toList();
+          // Filtrar por categoría/posición
+          final filteredPlayers = players.where((player) {
+            final position = (player['position'] ?? '').toString().toLowerCase();
+            return _matchesCategory(position, categoryId);
+          }).toList();
 
-        return filteredPlayers
-            .map((item) => _convertTransfermarktPlayerToModel(item))
-            .toList();
-      } else {
-        throw Exception('Error al cargar jugadores');
+          if (filteredPlayers.isNotEmpty) {
+            return filteredPlayers
+                .map((item) => _convertTransfermarktPlayerToModel(item))
+                .toList();
+          }
+        }
       }
     } catch (e) {
-      print('Error fetching players: $e');
-      // Fallback a datos locales si falla la API
-      final players = _playersData
-          .where((p) => p['category'] == categoryId)
-          .toList();
-      return players.map((item) => Player.fromJson(item)).toList();
+      print('Error fetching from API: $e');
     }
+
+    // Fallback a datos locales con imágenes reales
+    final players = _playersData
+        .where((p) => p['category'] == categoryId)
+        .toList();
+    return players.map((item) => Player.fromJson(item)).toList();
   }
 
   // Helper para convertir respuesta de Transfermark al modelo Player
   static Player _convertTransfermarktPlayerToModel(dynamic transfermarktPlayer) {
+    final position = transfermarktPlayer['position'] ?? 'Unknown';
+    final category = _getCategory(position.toString());
+    
     return Player(
       id: (transfermarktPlayer['id'] ?? '').toString(),
       name: transfermarktPlayer['name'] ?? 'Unknown',
-      position: transfermarktPlayer['position'] ?? 'Unknown',
+      position: position,
+      category: category,
       number: int.tryParse((transfermarktPlayer['number'] ?? '0').toString()) ?? 0,
       nationality: transfermarktPlayer['country'] ?? 'Unknown',
       description: transfermarktPlayer['name'] ?? '',
@@ -506,6 +495,29 @@ class ApiService {
       weight: int.tryParse((transfermarktPlayer['weight'] ?? '0').toString()) ?? 0,
       birthDate: transfermarktPlayer['date_of_birth'] ?? 'Unknown',
     );
+  }
+
+  // Helper para obtener categoría basada en posición
+  static String _getCategory(String position) {
+    position = position.toLowerCase();
+    
+    if (position.contains('goalkeeper') || position.contains('portero') || position.contains('gk')) {
+      return '1';
+    } else if (position.contains('defender') || position.contains('defensa') || 
+               position.contains('left') || position.contains('right') || 
+               position.contains('back') || position.contains('centre')) {
+      return '2';
+    } else if (position.contains('midfielder') || position.contains('centrocampista') || 
+               position.contains('winger') || position.contains('extremo') ||
+               position.contains('mediapunta')) {
+      return '3';
+    } else if (position.contains('striker') || position.contains('delantero') || 
+               (position.contains('forward') && !position.contains('midfielder'))) {
+      return '4';
+    } else if (position.contains('trainer') || position.contains('coach') || position.contains('entrenador')) {
+      return '5';
+    }
+    return '3'; // Default a centrocampista
   }
 
   // Helper para mapear posiciones a categorías
@@ -535,32 +547,34 @@ class ApiService {
 
   // Obtener detalle de jugador
   static Future<Player?> getPlayerDetail(String playerId) async {
-    if (useLocalData) {
-      try {
-        final playerData = _playersData.firstWhere(
-          (p) => p['id'].toString() == playerId,
-        );
-        return Player.fromJson(playerData);
-      } catch (e) {
-        return null;
-      }
-    }
-
     try {
-      final response = await http.get(
-        Uri.parse('$transfermarktApiUrl/players/$playerId/profile'),
+      // Primero intentar obtener del local
+      final playerData = _playersData.firstWhere(
+        (p) => p['id'].toString() == playerId,
+        orElse: () => {},
       );
+      
+      if (playerData.isNotEmpty) {
+        return Player.fromJson(playerData);
+      }
+      
+      // Si no está en local, intentar la API
+      if (!useLocalData) {
+        final response = await http.get(
+          Uri.parse('$transfermarktApiUrl/players/$playerId/profile'),
+          headers: {'Accept': 'application/json'},
+        ).timeout(const Duration(seconds: 10));
 
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        return _convertTransfermarktPlayerToModel(data);
-      } else {
-        return null;
+        if (response.statusCode == 200) {
+          final data = json.decode(response.body);
+          return _convertTransfermarktPlayerToModel(data);
+        }
       }
     } catch (e) {
       print('Error fetching player detail: $e');
-      return null;
     }
+    
+    return null;
   }
 
   // Buscar jugadores

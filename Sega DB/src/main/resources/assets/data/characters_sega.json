@@ -141,176 +141,147 @@
   },
   {
     "name": "Sonic the Hedgehog",
-    "image": "games/sonic_game.jpg",
+    "image": "games/sonic.png",
     "color": "#1E90FF",
     "game": "Plataformas",
     "type": "game"
   },
   {
-    "name": "Sonic the Hedgehog 2",
-    "image": "games/sonic2_game.jpg",
+    "name": "X-Men",
+    "image": "games/xmen.png",
     "color": "#FFD700",
-    "game": "Plataformas",
-    "type": "game"
-  },
-  {
-    "name": "Streets of Rage 2",
-    "image": "games/sor2_game.jpg",
-    "color": "#FF6347",
     "game": "Beat 'em up",
     "type": "game"
   },
   {
-    "name": "Golden Axe",
-    "image": "games/goldenaxe_game.jpg",
-    "color": "#228B22",
-    "game": "Hack and slash",
+    "name": "Street Fighter II",
+    "image": "games/streetfighter.png",
+    "color": "#FF6347",
+    "game": "Lucha",
     "type": "game"
   },
   {
-    "name": "Phantasy Star IV",
-    "image": "games/ps4_game.jpg",
+    "name": "Mortal Kombat",
+    "image": "games/mortalkombat.png",
     "color": "#8A2BE2",
-    "game": "RPG",
+    "game": "Lucha",
     "type": "game"
   },
   {
-    "name": "Shinobi III",
-    "image": "games/shinobi3_game.jpg",
+    "name": "NBA Jam",
+    "image": "games/nba-jam.png",
     "color": "#DC143C",
-    "game": "Acción",
+    "game": "Deportes",
     "type": "game"
   },
   {
-    "name": "Gunstar Heroes",
-    "image": "games/gunstar_game.jpg",
+    "name": "Out Run",
+    "image": "games/outrun.png",
     "color": "#FF8C00",
-    "game": "Run and gun",
+    "game": "Carreras",
     "type": "game"
   },
   {
-    "name": "Streets of Rage",
-    "image": "games/sor_game.jpg",
+    "name": "Comix Zone",
+    "image": "games/comix-zone.png",
     "color": "#4169E1",
     "game": "Beat 'em up",
     "type": "game"
   },
   {
-    "name": "Sonic & Knuckles",
-    "image": "games/sonicknuckles_game.jpg",
-    "color": "#FF4500",
+    "name": "Aladdin",
+    "image": "games/aladdin.png",
+    "color": "#FFD700",
     "game": "Plataformas",
     "type": "game"
   },
   {
-    "name": "Virtua Fighter 2",
-    "image": "games/vf2_game.jpg",
-    "color": "#2E8B57",
+    "name": "Virtual Bart",
+    "image": "games/virtualbart.png",
+    "color": "#FF1493",
+    "game": "Plataformas",
+    "type": "game"
+  },
+  {
+    "name": "Dragon Ball Z",
+    "image": "games/dragonballz.png",
+    "color": "#8B4513",
     "game": "Lucha",
     "type": "game"
   },
   {
-    "name": "Comix Zone",
-    "image": "games/comixzone_game.jpg",
-    "color": "#FF1493",
-    "game": "Beat 'em up",
-    "type": "game"
-  },
-  {
-    "name": "Altered Beast",
-    "image": "games/alteredbeast_game.jpg",
-    "color": "#8B4513",
-    "game": "Beat 'em up",
-    "type": "game"
-  },
-  {
-    "name": "Ecco the Dolphin",
-    "image": "games/ecco_game.jpg",
+    "name": "FIFA 94",
+    "image": "games/fifa94.png",
     "color": "#00CED1",
-    "game": "Aventura",
+    "game": "Deportes",
     "type": "game"
   },
-  {
-    "name": "ToeJam & Earl",
-    "image": "games/toejam_game.jpg",
-    "color": "#9932CC",
-    "game": "Acción-Aventura",
-    "type": "game"
-  },
-  {
-    "name": "Earthworm Jim",
-    "image": "games/earthwormjim_game.jpg",
-    "color": "#32CD32",
-    "game": "Plataformas",
-    "type": "game"
-  },
-
   {
     "name": "Sega Master System",
-    "image": "consoles/mastersystem.jpg",
+    "image": "consoles/master-system.png",
     "color": "#FF69B4",
     "game": "8-bit",
     "type": "console"
   },
   {
     "name": "Sega Mega Drive",
-    "image": "consoles/megadrive.jpg",
+    "image": "consoles/megadrive.png",
     "color": "#2F4F4F",
     "game": "16-bit",
     "type": "console"
   },
   {
-    "name": "Sega Genesis",
-    "image": "consoles/genesis.jpg",
-    "color": "#2F4F4F",
-    "game": "16-bit",
+    "name": "Sega SG-1000",
+    "image": "consoles/sg-1000.png",
+    "color": "#FFD700",
+    "game": "8-bit",
     "type": "console"
   },
   {
     "name": "Sega Saturn",
-    "image": "consoles/saturn.jpg",
+    "image": "consoles/saturn.png",
     "color": "#A9A9A9",
     "game": "32-bit",
     "type": "console"
   },
   {
     "name": "Sega Dreamcast",
-    "image": "consoles/dreamcast.jpg",
+    "image": "consoles/dreamcast.png",
     "color": "#FFD700",
     "game": "128-bit",
     "type": "console"
   },
   {
     "name": "Sega Game Gear",
-    "image": "consoles/gamegear.jpg",
+    "image": "consoles/game-gear.png",
     "color": "#00FF7F",
     "game": "Portátil",
     "type": "console"
   },
   {
-    "name": "Sega CD",
-    "image": "consoles/segacd.jpg",
+    "name": "Sega Game Gear Micro",
+    "image": "consoles/game-gear-micro.png",
+    "color": "#00CED1",
+    "game": "Portátil",
+    "type": "console"
+  },
+  {
+    "name": "Sega Mega CD",
+    "image": "consoles/megacd.png",
     "color": "#4682B4",
     "game": "Add-on",
     "type": "console"
   },
   {
     "name": "Sega 32X",
-    "image": "consoles/sega32x.jpg",
+    "image": "consoles/32x.png",
     "color": "#8B0000",
     "game": "Add-on",
     "type": "console"
   },
   {
-    "name": "Sega Nomad",
-    "image": "consoles/nomad.jpg",
-    "color": "#4B0082",
-    "game": "Portátil",
-    "type": "console"
-  },
-  {
     "name": "Sega Pico",
-    "image": "consoles/pico.jpg",
+    "image": "consoles/pico.png",
     "color": "#FF4500",
     "game": "Educativa",
     "type": "console"

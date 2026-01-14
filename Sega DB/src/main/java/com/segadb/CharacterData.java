@@ -5,7 +5,7 @@ public class CharacterData {
     private String image;
     private String color;
     private String game;
-    private String type; // "character", "game", "console"
+    private String type;
 
     public CharacterData(String name, String image, String color, String game, String type) {
         this.name = name;

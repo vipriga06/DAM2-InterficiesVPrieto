@@ -1,7 +1,5 @@
 package com.segadb;
 
-import java.util.Objects;
-
 import com.utils.UtilsViews;
 
 import javafx.fxml.FXML;
@@ -14,16 +12,16 @@ import javafx.scene.shape.Circle;
 public class ControllerItem1 {
 
     @FXML
-    private Label title;      // Per al nom del personatge
+    private Label title;
 
     @FXML
-    private Label subtitle;   // Per al nom del joc
+    private Label subtitle;
 
     @FXML
-    private ImageView image;  // Imatge del personatge
+    private ImageView image;
 
     @FXML
-    private Circle circle;    // Cercle per mostrar el color
+    private Circle circle;
 
     private CharacterData characterData;
 
@@ -31,28 +29,36 @@ public class ControllerItem1 {
         this.characterData = data;
     }
 
-    // Estableix el títol (nom)
     public void setTitle(String title) {
         this.title.setText(title);
     }
 
-    // Estableix el subtítol (nom del joc)
     public void setSubtitle(String subtitle) {
         this.subtitle.setText(subtitle);
     }
 
-    // Carrega la imatge des de ruta relativa (ha de ser ruta completa en classpath)
     public void setImage(String imagePath) {
         try {
-            Image img = new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath)));
+            if (imagePath == null || imagePath.isEmpty()) {
+                System.err.println("Error: imagePath és nul o buit");
+                return;
+            }
+            
+            java.io.InputStream is = getClass().getResourceAsStream(imagePath);
+            if (is == null) {
+                System.err.println("No s'ha trobat la imatge: " + imagePath);
+                return;
+            }
+            
+            Image img = new Image(is);
             this.image.setImage(img);
-        } catch (NullPointerException e) {
+            System.out.println("Imatge carregada correctament: " + imagePath);
+        } catch (Exception e) {
             System.err.println("Error carregant la imatge: " + imagePath);
             e.printStackTrace();
         }
     }
 
-    // Canvia el color de fons del cercle
     public void setCircleColor(String color) {
         circle.setStyle("-fx-fill: " + color);
     }
