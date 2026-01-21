@@ -45,6 +45,8 @@ class _PlayerDetailViewState extends State<PlayerDetailView> {
           }
 
           final player = snapshot.data!;
+          final imagePath = ApiService.getImageUrl(player.imageUrl);
+          final isRemote = imagePath.startsWith('http');
           return SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -69,29 +71,43 @@ class _PlayerDetailViewState extends State<PlayerDetailView> {
                           color: Colors.white.withOpacity(0.2),
                           shape: BoxShape.circle,
                         ),
-                        child: Image.network(
-                          ApiService.getImageUrl(player.imageUrl),
-                          fit: BoxFit.cover,
-                          loadingBuilder: (context, child, loadingProgress) {
-                            if (loadingProgress == null) return child;
-                            return Center(
-                              child: Icon(
-                                Icons.person,
-                                size: 120,
-                                color: Colors.white,
+                        child: isRemote
+                            ? Image.network(
+                                imagePath,
+                                fit: BoxFit.cover,
+                                loadingBuilder: (context, child, loadingProgress) {
+                                  if (loadingProgress == null) return child;
+                                  return Center(
+                                    child: Icon(
+                                      Icons.person,
+                                      size: 120,
+                                      color: Colors.white,
+                                    ),
+                                  );
+                                },
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Center(
+                                    child: Icon(
+                                      Icons.person,
+                                      size: 120,
+                                      color: Colors.white,
+                                    ),
+                                  );
+                                },
+                              )
+                            : Image.asset(
+                                imagePath,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Center(
+                                    child: Icon(
+                                      Icons.person,
+                                      size: 120,
+                                      color: Colors.white,
+                                    ),
+                                  );
+                                },
                               ),
-                            );
-                          },
-                          errorBuilder: (context, error, stackTrace) {
-                            return Center(
-                              child: Icon(
-                                Icons.person,
-                                size: 120,
-                                color: Colors.white,
-                              ),
-                            );
-                          },
-                        ),
                       ),
                     ),
                   ),

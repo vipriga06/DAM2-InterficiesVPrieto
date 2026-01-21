@@ -137,6 +137,8 @@ class _SearchViewState extends State<SearchView> {
                         itemCount: _searchResults.length,
                         itemBuilder: (context, index) {
                           final player = _searchResults[index];
+                          final imagePath = ApiService.getImageUrl(player.imageUrl);
+                          final isRemote = imagePath.startsWith('http');
                           return Card(
                             margin: const EdgeInsets.symmetric(
                               horizontal: 8,
@@ -160,29 +162,43 @@ class _SearchViewState extends State<SearchView> {
                                 ),
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(8),
-                                  child: Image.network(
-                                    ApiService.getImageUrl(player.imageUrl),
-                                    fit: BoxFit.cover,
-                                    loadingBuilder: (context, child, loadingProgress) {
-                                      if (loadingProgress == null) return child;
-                                      return Center(
-                                        child: Icon(
-                                          Icons.person,
-                                          color: Colors.white,
-                                          size: 30,
+                                  child: isRemote
+                                      ? Image.network(
+                                          imagePath,
+                                          fit: BoxFit.cover,
+                                          loadingBuilder: (context, child, loadingProgress) {
+                                            if (loadingProgress == null) return child;
+                                            return Center(
+                                              child: Icon(
+                                                Icons.person,
+                                                color: Colors.white,
+                                                size: 30,
+                                              ),
+                                            );
+                                          },
+                                          errorBuilder: (context, error, stackTrace) {
+                                            return Center(
+                                              child: Icon(
+                                                Icons.person,
+                                                color: Colors.white,
+                                                size: 30,
+                                              ),
+                                            );
+                                          },
+                                        )
+                                      : Image.asset(
+                                          imagePath,
+                                          fit: BoxFit.cover,
+                                          errorBuilder: (context, error, stackTrace) {
+                                            return Center(
+                                              child: Icon(
+                                                Icons.person,
+                                                color: Colors.white,
+                                                size: 30,
+                                              ),
+                                            );
+                                          },
                                         ),
-                                      );
-                                    },
-                                    errorBuilder: (context, error, stackTrace) {
-                                      return Center(
-                                        child: Icon(
-                                          Icons.person,
-                                          color: Colors.white,
-                                          size: 30,
-                                        ),
-                                      );
-                                    },
-                                  ),
                                 ),
                               ),
                               title: Text(

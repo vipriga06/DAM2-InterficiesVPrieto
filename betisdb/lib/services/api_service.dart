@@ -55,7 +55,7 @@ class ApiService {
       'number': 1,
       'nationality': 'España',
       'description': 'Portero titular del Betis 2025/2026. Guardián de la portería verdiblanca.',
-      'imageUrl': 'https://tmssl.akamaized.net/images/foto/galerie/alvaro-valles-real-betis-2023-1695050862-116606.jpg',
+      'imageUrl': 'alvaro_valles.jpg',
       'height': 190,
       'weight': 83,
       'birthDate': '25/11/1997'
@@ -68,7 +68,7 @@ class ApiService {
       'number': 25,
       'nationality': 'España',
       'description': 'Portero suplente con experiencia en la élite.',
-      'imageUrl': 'https://tmssl.akamaized.net/images/foto/galerie/pau-lopez-fc-girona-2022-1630502196-72486.jpg',
+      'imageUrl': 'pau_lopez.jpg',
       'height': 186,
       'weight': 80,
       'birthDate': '13/04/1994'
@@ -82,7 +82,7 @@ class ApiService {
       'number': 2,
       'nationality': 'España',
       'description': 'Lateral derecho ofensivo con gran velocidad.',
-      'imageUrl': 'https://tmssl.akamaized.net/images/foto/galerie/hector-bellerin-real-betis-2023-1725527883-120277.jpg',
+      'imageUrl': 'hector_bellerin.jpg',
       'height': 180,
       'weight': 72,
       'birthDate': '19/03/1995'
@@ -95,7 +95,7 @@ class ApiService {
       'number': 3,
       'nationality': 'España',
       'description': 'Defensa central español experimentado.',
-      'imageUrl': 'https://tmssl.akamaized.net/images/foto/galerie/diego-llorente-real-betis-2023-1632294672-73691.jpg',
+      'imageUrl': 'diego_llorente.jpg',
       'height': 187,
       'weight': 77,
       'birthDate': '16/02/1993'
@@ -108,7 +108,7 @@ class ApiService {
       'number': 4,
       'nationality': 'Brasil',
       'description': 'Defensa central brasileño con solidez defensiva.',
-      'imageUrl': 'https://tmssl.akamaized.net/images/foto/galerie/natan-real-betis-2023-1693905851-115797.jpg',
+      'imageUrl': 'natan.jpg',
       'height': 188,
       'weight': 79,
       'birthDate': '15/05/1999'
@@ -121,7 +121,7 @@ class ApiService {
       'number': 6,
       'nationality': 'España',
       'description': 'Lateral izquierdo español con buen manejo defensivo.',
-      'imageUrl': 'https://tmssl.akamaized.net/images/foto/galerie/sergi-altimira-real-betis-2023-1693476639-115544.jpg',
+      'imageUrl': 'sergi_altimira.jpg',
       'height': 179,
       'weight': 71,
       'birthDate': '09/10/2001'
@@ -134,7 +134,7 @@ class ApiService {
       'number': 12,
       'nationality': 'Suiza',
       'description': 'Lateral izquierdo suizo experimentado.',
-      'imageUrl': 'https://tmssl.akamaized.net/images/foto/galerie/ricardo-rodriguez-torino-fc-2022-1632123806-73687.jpg',
+      'imageUrl': 'ricardo_rodriguez.jpg',
       'height': 181,
       'weight': 73,
       'birthDate': '25/08/1992'
@@ -147,7 +147,7 @@ class ApiService {
       'number': 16,
       'nationality': 'Argentina',
       'description': 'Joven defensa central argentino en desarrollo.',
-      'imageUrl': 'https://tmssl.akamaized.net/images/foto/galerie/valentin-gomez-velez-sarsfield-2023-1701351886-105843.jpg',
+      'imageUrl': 'valentin_gomez.jpg',
       'height': 190,
       'weight': 82,
       'birthDate': '21/02/2003'
@@ -160,7 +160,7 @@ class ApiService {
       'number': 24,
       'nationality': 'España',
       'description': 'Lateral izquierdo versátil con capacidad defensiva.',
-      'imageUrl': 'https://tmssl.akamaized.net/images/foto/galerie/aitor-ruibal-real-betis-2023-1693817854-115748.jpg',
+      'imageUrl': 'aitor_ruibal.jpg',
       'height': 182,
       'weight': 74,
       'birthDate': '29/11/1996'
@@ -186,20 +186,20 @@ class ApiService {
       'number': 52,
       'nationality': 'España',
       'description': 'Joven defensa central de la cantera.',
-      'imageUrl': 'https://img.a.transfermarkt.technology/portrait/big/default.jpg?lm=1',
+      'imageUrl': 'pablo_garcia.jpg',
       'height': 189,
       'weight': 80,
       'birthDate': '12/09/2003'
     },
     {
       'id': '12',
-      'name': 'José Ortiz',
+      'name': 'Ángel Ortiz',
       'position': 'Defensa',
       'category': '2',
       'number': 40,
       'nationality': 'España',
       'description': 'Defensor español con experiencia.',
-      'imageUrl': 'https://img.a.transfermarkt.technology/portrait/big/default.jpg?lm=1',
+      'imageUrl': 'angel_ortiz.jpg',
       'height': 185,
       'weight': 75,
       'birthDate': '18/01/2002'
@@ -213,20 +213,20 @@ class ApiService {
       'number': 7,
       'nationality': 'Brasil',
       'description': 'Extremo derecho brasileño con gol.',
-      'imageUrl': 'https://tmssl.akamaized.net/images/foto/galerie/antony-real-betis-2023-1693817727-115732.jpg',
+      'imageUrl': 'antony.jpg',
       'height': 176,
       'weight': 68,
       'birthDate': '24/02/2000'
     },
     {
       'id': '14',
-      'name': 'Alexis Fornals',
+      'name': 'Pablo Fornals',
       'position': 'Centrocampista Ofensivo',
       'category': '3',
       'number': 8,
       'nationality': 'España',
       'description': 'Centrocampista ofensivo español de gran técnica.',
-      'imageUrl': 'https://tmssl.akamaized.net/images/foto/galerie/alexis-fornals-real-betis-2023-1693817739-115733.jpg',
+      'imageUrl': 'pablo_fornals.jpg',
       'height': 180,
       'weight': 74,
       'birthDate': '05/08/1996'
@@ -239,46 +239,46 @@ class ApiService {
       'number': 9,
       'nationality': 'Argentina',
       'description': 'Extremo argentino versátil con velocidad.',
-      'imageUrl': 'https://tmssl.akamaized.net/images/foto/galerie/joaquin-correa-real-betis-2023-1693817846-115746.jpg',
+      'imageUrl': 'chimy_avila.jpg',
       'height': 180,
       'weight': 75,
       'birthDate': '26/01/1996'
     },
     {
       'id': '16',
-      'name': 'Abde Ezzalzouli',
+      'name': 'Ez Abde',
       'position': 'Extremo Izquierdo',
       'category': '3',
       'number': 10,
       'nationality': 'Marruecos',
       'description': 'Extremo izquierdo marroquí rápido.',
-      'imageUrl': 'https://tmssl.akamaized.net/images/foto/galerie/abdessamad-ezzalzouli-real-betis-2023-1693817821-115737.jpg',
+      'imageUrl': 'ez_abde.jpg',
       'height': 173,
       'weight': 66,
       'birthDate': '03/01/2001'
     },
     {
       'id': '17',
-      'name': 'Bakambu',
+      'name': 'Cédric Bakambu',
       'position': 'Delantero',
       'category': '3',
       'number': 11,
       'nationality': 'Congo',
       'description': 'Delantero congoleño con gol.',
-      'imageUrl': 'https://tmssl.akamaized.net/images/foto/galerie/bakambu-real-betis-2023-1693817854-115747.jpg',
+      'imageUrl': 'cedric_bakambu.jpg',
       'height': 183,
       'weight': 78,
       'birthDate': '09/08/1994'
     },
     {
       'id': '18',
-      'name': 'Adrián San Miguel',
+      'name': 'Adrián',
       'position': 'Centrocampista Defensivo',
       'category': '3',
       'number': 13,
       'nationality': 'España',
       'description': 'Centrocampista defensivo español.',
-      'imageUrl': 'https://img.a.transfermarkt.technology/portrait/big/default.jpg?lm=1',
+      'imageUrl': 'adrian.jpg',
       'height': 178,
       'weight': 72,
       'birthDate': '27/04/1995'
@@ -291,33 +291,33 @@ class ApiService {
       'number': 14,
       'nationality': 'Marruecos',
       'description': 'Centrocampista marroquí polivalente.',
-      'imageUrl': 'https://tmssl.akamaized.net/images/foto/galerie/sofyan-amrabat-real-betis-2023-1693817780-115734.jpg',
+      'imageUrl': 'sofyan_amrabat.jpg',
       'height': 183,
       'weight': 76,
       'birthDate': '21/08/1996'
     },
     {
       'id': '20',
-      'name': 'Javier Riquelme',
+      'name': 'Rodrigo Riquelme',
       'position': 'Centrocampista',
       'category': '3',
       'number': 17,
       'nationality': 'España',
       'description': 'Centrocampista español del Betis B.',
-      'imageUrl': 'https://img.a.transfermarkt.technology/portrait/big/default.jpg?lm=1',
+      'imageUrl': 'rodrigo_riquelme.jpg',
       'height': 181,
       'weight': 73,
       'birthDate': '10/03/2001'
     },
     {
       'id': '21',
-      'name': 'Nelson Deossa',
+      'name': 'Nilson Deossa',
       'position': 'Centrocampista Defensivo',
       'category': '3',
       'number': 18,
       'nationality': 'Colombia',
       'description': 'Centrocampista defensivo colombiano.',
-      'imageUrl': 'https://img.a.transfermarkt.technology/portrait/big/default.jpg?lm=1',
+      'imageUrl': 'nilson_deossa.jpg',
       'height': 185,
       'weight': 78,
       'birthDate': '17/04/2000'
@@ -330,7 +330,7 @@ class ApiService {
       'number': 20,
       'nationality': 'Argentina',
       'description': 'Mediapunta argentino de gran técnica.',
-      'imageUrl': 'https://tmssl.akamaized.net/images/foto/galerie/giovani-lo-celso-real-betis-2023-1693817869-115742.jpg',
+      'imageUrl': 'gio_lo_celso.jpg',
       'height': 180,
       'weight': 75,
       'birthDate': '09/04/1996'
@@ -343,7 +343,7 @@ class ApiService {
       'number': 21,
       'nationality': 'España',
       'description': 'Centrocampista defensivo español.',
-      'imageUrl': 'https://tmssl.akamaized.net/images/foto/galerie/marc-roca-real-betis-2023-1693477023-115549.jpg',
+      'imageUrl': 'marc_roca.jpg',
       'height': 184,
       'weight': 77,
       'birthDate': '05/12/1996'
@@ -356,7 +356,7 @@ class ApiService {
       'number': 22,
       'nationality': 'España',
       'description': 'Centrocampista ofensivo español experimentado.',
-      'imageUrl': 'https://tmssl.akamaized.net/images/foto/galerie/isco-alarcon-real-betis-2023-1693817788-115735.jpg',
+      'imageUrl': 'isco.jpg',
       'height': 176,
       'weight': 73,
       'birthDate': '21/04/1992'
@@ -369,7 +369,7 @@ class ApiService {
       'number': 23,
       'nationality': 'República Dominicana',
       'description': 'Lateral izquierdo dominicano versátil.',
-      'imageUrl': 'https://tmssl.akamaized.net/images/foto/galerie/junior-firpo-real-betis-2023-1693817812-115740.jpg',
+      'imageUrl': 'junior_firpo.jpg',
       'height': 180,
       'weight': 72,
       'birthDate': '04/04/1996'
@@ -409,7 +409,7 @@ class ApiService {
       'number': 19,
       'nationality': 'Colombia',
       'description': 'Delantero colombiano con gol.',
-      'imageUrl': 'https://tmssl.akamaized.net/images/foto/galerie/cucho-hernandez-real-betis-2023-1693817829-115741.jpg',
+      'imageUrl': 'cucho.jpg',
       'height': 183,
       'weight': 77,
       'birthDate': '09/06/1999'
@@ -636,11 +636,9 @@ class ApiService {
 
   // Obtener imagen
   static String getImageUrl(String imagePath) {
-    // Si la ruta ya es una URL completa (http/https), devolverla tal cual
     if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
       return imagePath;
     }
-    // Si no, construir la URL del servidor
-    return '$baseUrl/images/$imagePath';
+    return 'images/$imagePath';
   }
 }
