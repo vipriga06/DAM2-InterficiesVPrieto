@@ -17,7 +17,7 @@ class EncryptView extends StatelessWidget {
 }
 
 class _EncryptBody extends StatefulWidget {
-  const _EncryptBody({super.key});
+  const _EncryptBody();
 
   @override
   State<_EncryptBody> createState() => _EncryptBodyState();
