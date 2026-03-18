@@ -7,7 +7,7 @@ class AdaptiveButton extends StatelessWidget {
   final Widget icon;
   final String label;
 
-  const AdaptiveButton({Key? key, required this.onPressed, required this.icon, required this.label}) : super(key: key);
+  const AdaptiveButton({super.key, required this.onPressed, required this.icon, required this.label});
 
   bool get _useCupertino => !kIsWeb && (defaultTargetPlatform == TargetPlatform.iOS || defaultTargetPlatform == TargetPlatform.macOS);
 

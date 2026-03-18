@@ -17,7 +17,7 @@ class DecryptView extends StatelessWidget {
 }
 
 class _DecryptBody extends StatefulWidget {
-  const _DecryptBody({Key? key}) : super(key: key);
+  const _DecryptBody({super.key});
 
   @override
   State<_DecryptBody> createState() => _DecryptBodyState();
