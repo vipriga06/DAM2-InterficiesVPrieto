@@ -1,14 +1,21 @@
 package com.segadb;
 
+import com.segadb.service.ImageCache;
 import com.utils.UtilsViews;
 
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 
 public class ControllerDetailMobile {
+
+    private static final String MAIN_VIEW_ID = "ViewMain";
+    private static final String MAIN_MOBILE_VIEW_ID = "ViewMainMobile";
+    private static final String IMAGE_BASE_PATH = "/assets/images/";
+
+    private final ImageCache imageCache = new ImageCache();
 
     @FXML
     private VBox rootVBox;
@@ -24,55 +31,55 @@ public class ControllerDetailMobile {
     @FXML
     private Label detailType;
 
-    private SegaItemData currentCharacter;
+    private SegaItemData currentItem;
 
     @FXML
     public void initialize() {
-        if (rootVBox != null && rootVBox.getScene() != null) {
-            rootVBox.getScene().getWindow().widthProperty().addListener((obs, oldVal, newVal) -> {
-                if (newVal.doubleValue() >= 500 && currentCharacter != null) {
-                    ControllerMain mainCtrl = (ControllerMain) UtilsViews.getController("ViewMain");
-                    if (mainCtrl != null) {
-                        mainCtrl.selectCharacterFromDetail(currentCharacter);
-                    }
-                    UtilsViews.setView("ViewMain");
-                }
-            });
+        if (rootVBox == null) {
+            return;
         }
+
+        rootVBox.sceneProperty().addListener((obs, oldScene, newScene) -> registerSceneListeners(newScene));
+        registerSceneListeners(rootVBox.getScene());
     }
 
-    public void setItemData(SegaItemData character) {
-        this.currentCharacter = character;
+    private void registerSceneListeners(Scene scene) {
+        if (scene == null) {
+            return;
+        }
+
+        scene.widthProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal.doubleValue() >= 500 && currentItem != null) {
+                ControllerMain mainCtrl = (ControllerMain) UtilsViews.getController(MAIN_VIEW_ID);
+                if (mainCtrl != null) {
+                    mainCtrl.selectItemFromDetail(currentItem);
+                }
+                UtilsViews.setView(MAIN_VIEW_ID);
+            }
+        });
+    }
+
+    public void setItemData(SegaItemData item) {
+        this.currentItem = item;
         updateView();
     }
 
     private void updateView() {
-        if (currentCharacter != null) {
-            titleLabel.setText(currentCharacter.getName());
-            detailName.setText(currentCharacter.getName());
-            detailGame.setText(currentCharacter.getGame());
-            detailType.setText(currentCharacter.getType().toUpperCase());
-
-            try {
-                String imagePath = currentCharacter.getImage();
-                String fullImagePath = "/assets/images/" + imagePath;
-                java.io.InputStream is = getClass().getResourceAsStream(fullImagePath);
-                if (is == null) {
-                    System.err.println("No s'ha trobat la imatge: " + fullImagePath);
-                    return;
-                }
-                Image img = new Image(is);
-                detailImage.setImage(img);
-                System.out.println("Imatge de detall carregada: " + fullImagePath);
-            } catch (Exception e) {
-                System.err.println("Error cargant la imatge: " + currentCharacter.getImage());
-                e.printStackTrace();
-            }
+        if (currentItem == null) {
+            return;
         }
+
+        titleLabel.setText(currentItem.getName());
+        detailName.setText(currentItem.getName());
+        detailGame.setText(currentItem.getGame());
+        detailType.setText(currentItem.getType().toUpperCase());
+
+        String fullImagePath = IMAGE_BASE_PATH + currentItem.getImage();
+        imageCache.getImage(getClass(), fullImagePath).ifPresent(detailImage::setImage);
     }
 
     @FXML
     private void onBackClicked() {
-        UtilsViews.setViewAnimating("ViewMainMobile");
+        UtilsViews.setViewAnimating(MAIN_MOBILE_VIEW_ID);
     }
 }

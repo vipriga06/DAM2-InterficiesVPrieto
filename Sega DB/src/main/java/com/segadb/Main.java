@@ -8,14 +8,19 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
 
+    private static final double MOBILE_BREAKPOINT = 500;
+    private static final String VIEW_MAIN = "ViewMain";
+    private static final String VIEW_MAIN_MOBILE = "ViewMainMobile";
+    private static final String VIEW_DETAIL_MOBILE = "ViewDetailMobile";
+
     private boolean isMobileView = false;
 
     @Override
     public void start(Stage stage) throws Exception {
         try {
-            UtilsViews.addView(Main.class, "ViewMain", "/assets/viewMain.fxml");
-            UtilsViews.addView(Main.class, "ViewMainMobile", "/assets/viewMainMobile.fxml");
-            UtilsViews.addView(Main.class, "ViewDetailMobile", "/assets/viewDetailMobile.fxml");
+            UtilsViews.addView(Main.class, VIEW_MAIN, "/assets/viewMain.fxml");
+            UtilsViews.addView(Main.class, VIEW_MAIN_MOBILE, "/assets/viewMainMobile.fxml");
+            UtilsViews.addView(Main.class, VIEW_DETAIL_MOBILE, "/assets/viewDetailMobile.fxml");
 
             Scene scene = new Scene(UtilsViews.parentContainer, 700, 400);
             
@@ -26,47 +31,43 @@ public class Main extends Application {
             stage.show();
 
             stage.widthProperty().addListener((obs, oldVal, newVal) -> {
-                boolean newIsMobile = newVal.doubleValue() < 500;
-                
+                boolean newIsMobile = newVal.doubleValue() < MOBILE_BREAKPOINT;
                 if (newIsMobile != isMobileView) {
-                    isMobileView = newIsMobile;
-                    
-                    ControllerMain currentController = (ControllerMain) UtilsViews.getController(isMobileView ? "ViewMain" : "ViewMainMobile");
-                    String filterToPreserve = currentController != null ? currentController.getCurrentFilter() : "Tots";
-                    String typeToPreserve = currentController != null ? currentController.getCurrentType() : "character";
-                    
-                    if (newIsMobile) {
-                        UtilsViews.setView("ViewMainMobile");
-                        ControllerMain mobileController = (ControllerMain) UtilsViews.getController("ViewMainMobile");
-                        if (mobileController != null) {
-                            mobileController.setCurrentType(typeToPreserve);
-                            mobileController.setCurrentFilter(filterToPreserve);
-                        }
-                    } else {
-                        UtilsViews.setView("ViewMain");
-                        ControllerMain desktopController = (ControllerMain) UtilsViews.getController("ViewMain");
-                        if (desktopController != null) {
-                            desktopController.setCurrentType(typeToPreserve);
-                            desktopController.setCurrentFilter(filterToPreserve);
-                        }
-                    }
+                    switchMainView(newIsMobile);
                 }
             });
 
-            isMobileView = stage.getWidth() < 500;
+            isMobileView = stage.getWidth() < MOBILE_BREAKPOINT;
             if (isMobileView) {
-                UtilsViews.setView("ViewMainMobile");
+                UtilsViews.setView(VIEW_MAIN_MOBILE);
             } else {
-                UtilsViews.setView("ViewMain");
+                UtilsViews.setView(VIEW_MAIN);
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("Error iniciant Sega DB: " + e.getMessage());
             throw e;
         }
     }
 
     public static void main(String[] args) {
         launch(args);
+    }
+
+    private void switchMainView(boolean newIsMobile) {
+        String currentViewId = isMobileView ? VIEW_MAIN_MOBILE : VIEW_MAIN;
+        ControllerMain currentController = (ControllerMain) UtilsViews.getController(currentViewId);
+        String filterToPreserve = currentController != null ? currentController.getCurrentFilter() : "Tots";
+        String typeToPreserve = currentController != null ? currentController.getCurrentType() : "character";
+
+        isMobileView = newIsMobile;
+        String targetViewId = newIsMobile ? VIEW_MAIN_MOBILE : VIEW_MAIN;
+        UtilsViews.setView(targetViewId);
+
+        ControllerMain targetController = (ControllerMain) UtilsViews.getController(targetViewId);
+        if (targetController != null) {
+            targetController.setCurrentType(typeToPreserve);
+            targetController.setCurrentFilter(filterToPreserve);
+        }
     }
 }

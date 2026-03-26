@@ -1,25 +1,37 @@
 package com.segadb;
 
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Scanner;
-import java.util.stream.Collectors;
+import java.util.Map;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
+import com.segadb.data.JsonSegaItemRepository;
+import com.segadb.data.SegaItemRepository;
+import com.segadb.service.ImageCache;
+import com.segadb.service.SegaItemFilterService;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
 public class ControllerMain {
+
+    private static final String ALL_CATEGORIES = "Tots";
+    private static final String DEFAULT_TYPE = "character";
+    private static final String SUBVIEW_ITEM_PATH = "/assets/subviewCharacters.fxml";
+    private static final String IMAGE_BASE_PATH = "/assets/images/";
+    private static final String DETAIL_MOBILE_VIEW_ID = "ViewDetailMobile";
+
+    private final SegaItemRepository itemRepository =
+        new JsonSegaItemRepository("/assets/data/characters_sega.json");
+    private final SegaItemFilterService filterService = new SegaItemFilterService();
+    private final ImageCache imageCache = new ImageCache();
+    private final Map<SegaItemData, AnchorPane> itemNodeCache = new HashMap<>();
 
     @FXML
     private VBox list1;
@@ -37,201 +49,154 @@ public class ControllerMain {
     private ChoiceBox<String> categoryChoice;
 
     @FXML
-    private ChoiceBox<String> typeChoice; // Nuevo ChoiceBox para tipos
+    private ChoiceBox<String> typeChoice;
 
-    private List<SegaItemData> allCharacters = new ArrayList<>();
-    private String currentFilter = "Tots";
-    private String currentType = "character";
+    private List<SegaItemData> allItems = new ArrayList<>();
+    private SegaItemData selectedItem;
+    private String currentFilter = ALL_CATEGORIES;
+    private String currentType = DEFAULT_TYPE;
 
     @FXML
     public void initialize() {
-        System.out.println("Inicialitzant controlador...");
-        loadCharactersFromJson();
+        loadItems();
         setupTypeChoice();
         setupCategoryChoice();
-        System.out.println("Cridant refreshList...");
         refreshList();
-        System.out.println("RefreshList completat");
+    }
+
+    private void loadItems() {
+        allItems = itemRepository.loadItems();
+        filterService.index(allItems);
     }
 
     private void setupTypeChoice() {
-        if (typeChoice != null) {
-            typeChoice.getItems().addAll("character", "game", "console");
-            typeChoice.setValue("character");
-
-            typeChoice.getSelectionModel().selectedItemProperty().addListener(
-                (observable, oldValue, newValue) -> {
-                    if (newValue != null) {
-                        currentType = newValue;
-                        updateCategoryChoice();
-                        refreshList();
-                    }
-                }
-            );
-        }
-    }
-
-    private void updateCategoryChoice() {
-        if (categoryChoice != null) {
-            categoryChoice.getItems().clear();
-            
-            List<String> categories = allCharacters.stream()
-                .filter(c -> c.getType().equals(currentType))
-                .map(SegaItemData::getGame)
-                .distinct()
-                .sorted()
-                .collect(Collectors.toList());
-
-            categoryChoice.getItems().add("Tots");
-            categoryChoice.getItems().addAll(categories);
-            categoryChoice.setValue("Tots");
-            currentFilter = "Tots";
-        }
-    }
-
-    private void setupCategoryChoice() {
-        if (categoryChoice != null) {
-            updateCategoryChoice();
-
-            categoryChoice.getSelectionModel().selectedItemProperty().addListener(
-                (observable, oldValue, newValue) -> {
-                    if (newValue != null) {
-                        currentFilter = newValue;
-                        refreshList();
-                    }
-                }
-            );
-        }
-    }
-
-    private void loadCharactersFromJson() {
-        try (InputStream is = getClass().getResourceAsStream("/assets/data/characters_sega.json")) {
-            if (is == null) {
-                System.err.println("No s'ha trobat el fitxer JSON");
-                return;
-            }
-
-            String jsonText;
-            try (Scanner scanner = new Scanner(is, StandardCharsets.UTF_8.name())) {
-                jsonText = scanner.useDelimiter("\\A").next();
-            }
-
-            JSONArray array = new JSONArray(jsonText);
-
-            for (int i = 0; i < array.length(); i++) {
-                JSONObject obj = array.getJSONObject(i);
-                String name = obj.getString("name");
-                String imageFile = obj.getString("image");
-                String color = obj.getString("color");
-                String game = obj.getString("game");
-                String type = obj.getString("type");
-
-                allCharacters.add(new SegaItemData(name, imageFile, color, game, type));
-            }
-
-            System.out.println("Dades carregades: " + allCharacters.size());
-        } catch (Exception e) {
-            System.err.println("Error carregant l'arxiu JSON:");
-            e.printStackTrace();
-        }
-    }
-
-    public void refreshList() {
-        System.out.println("refreshList cridat");
-        if (list1 == null) {
-            System.err.println("ERROR: list1 és null!");
+        if (typeChoice == null) {
             return;
         }
 
-        list1.getChildren().clear();
-        System.out.println("Total elements: " + allCharacters.size());
-        System.out.println("Tipus actual: " + currentType);
-
-        List<SegaItemData> filteredCharacters = allCharacters.stream()
-            .filter(c -> c.getType().equals(currentType))
-            .collect(Collectors.toList());
-
-        System.out.println("Elements filtrats per tipus: " + filteredCharacters.size());
-
-        if (!"Tots".equals(currentFilter)) {
-            filteredCharacters = filteredCharacters.stream()
-                .filter(c -> c.getGame().equals(currentFilter))
-                .collect(Collectors.toList());
-            System.out.println("Elements filtrats per categoria: " + filteredCharacters.size());
+        List<String> availableTypes = filterService.getAvailableTypes();
+        if (availableTypes.isEmpty()) {
+            availableTypes = List.of("character", "game", "console");
         }
 
-        System.out.println("Intentant cargar " + filteredCharacters.size() + " elements...");
-        
-        try {
-            for (SegaItemData character : filteredCharacters) {
-                System.out.println("Cargant: " + character.getName());
-                FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/assets/subviewCharacters.fxml")
-                );
-                AnchorPane item = loader.load();
+        typeChoice.getItems().setAll(availableTypes);
+        if (!availableTypes.contains(currentType)) {
+            currentType = availableTypes.get(0);
+        }
+        typeChoice.setValue(currentType);
 
-                ControllerItem1 controllerItem = loader.getController();
-                controllerItem.setTitle(character.getName());
-                controllerItem.setSubtitle(character.getGame());
-                
-                String imagePath = character.getImage();
-                String fullImagePath = "/assets/images/" + imagePath;
-                System.out.println("Intentant cargar imatge: " + fullImagePath);
-                controllerItem.setImage(fullImagePath);
-                controllerItem.setCircleColor(character.getColor());
-                controllerItem.setItemData(character);
-
-                item.setOnMouseClicked(event -> {
-                    selectCharacter(character);
-                    if (list1.getScene() != null && list1.getScene().getWindow() != null) {
-                        double sceneWidth = list1.getScene().getWidth();
-                        if (sceneWidth < 500) {
-                            ControllerDetailMobile detailCtrl = (ControllerDetailMobile) com.utils.UtilsViews.getController("ViewDetailMobile");
-                            if (detailCtrl != null) {
-                                detailCtrl.setItemData(character);
-                            }
-                            com.utils.UtilsViews.setViewAnimating("ViewDetailMobile");
-                        }
-                    }
-                });
-
-                list1.getChildren().add(item);
-                System.out.println("Element agregat a list1");
+        typeChoice.getSelectionModel().selectedItemProperty().addListener(
+            (observable, oldValue, newValue) -> {
+                if (newValue != null && !newValue.equals(oldValue)) {
+                    currentType = newValue;
+                    updateCategoryChoice(true);
+                    refreshList();
+                }
             }
-            System.out.println("Total elements a list1: " + list1.getChildren().size());
-        } catch (Exception e) {
-            System.err.println("Error cargant els elements:");
-            e.printStackTrace();
+        );
+    }
+
+    private void updateCategoryChoice(boolean resetFilter) {
+        if (categoryChoice == null) {
+            return;
+        }
+
+        List<String> categories = filterService.getCategoriesForType(currentType);
+        categoryChoice.getItems().setAll(ALL_CATEGORIES);
+        categoryChoice.getItems().addAll(categories);
+
+        if (resetFilter || !categoryChoice.getItems().contains(currentFilter)) {
+            currentFilter = ALL_CATEGORIES;
+        }
+        categoryChoice.setValue(currentFilter);
+    }
+
+    private void setupCategoryChoice() {
+        if (categoryChoice == null) {
+            return;
+        }
+
+        updateCategoryChoice(true);
+        categoryChoice.getSelectionModel().selectedItemProperty().addListener(
+            (observable, oldValue, newValue) -> {
+                if (newValue != null && !newValue.equals(oldValue)) {
+                    currentFilter = newValue;
+                    refreshList();
+                }
+            }
+        );
+    }
+
+    public void refreshList() {
+        if (list1 == null) {
+            return;
+        }
+
+        List<SegaItemData> filteredItems = filterService.filter(currentType, currentFilter);
+        List<AnchorPane> cachedNodes = new ArrayList<>(filteredItems.size());
+        for (SegaItemData item : filteredItems) {
+            cachedNodes.add(getOrCreateItemNode(item));
+        }
+        list1.getChildren().setAll(cachedNodes);
+
+        if (!filteredItems.isEmpty() && selectedItem == null) {
+            handleItemSelected(filteredItems.get(0));
         }
     }
 
-    private void selectCharacter(SegaItemData character) {
-        System.out.println("Seleccionat: " + character.getName());
-        
-        if (image != null) {
-            try {
-                String imagePath = character.getImage();
-                String fullImagePath = "/assets/images/" + imagePath;
-                java.io.InputStream is = getClass().getResourceAsStream(fullImagePath);
-                if (is == null) {
-                    System.err.println("No s'ha trobat la imatge: " + fullImagePath);
-                    return;
-                }
-                Image img = new Image(is);
-                image.setImage(img);
-                System.out.println("Imatge seleccionada carregada: " + fullImagePath);
-            } catch (Exception e) {
-                System.err.println("Error cargant la imatge: " + character.getImage());
-                e.printStackTrace();
+    private AnchorPane getOrCreateItemNode(SegaItemData item) {
+        AnchorPane existingNode = itemNodeCache.get(item);
+        if (existingNode != null) {
+            return existingNode;
+        }
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(SUBVIEW_ITEM_PATH));
+            AnchorPane node = loader.load();
+            ControllerItem1 itemController = loader.getController();
+
+            String fullImagePath = IMAGE_BASE_PATH + item.getImage();
+            itemController.bindData(item, imageCache.getImage(getClass(), fullImagePath).orElse(null));
+            itemController.setOnItemSelected(this::handleItemSelected);
+            node.setOnMouseClicked(event -> itemController.notifySelection());
+
+            itemNodeCache.put(item, node);
+            return node;
+        } catch (IOException e) {
+            throw new IllegalStateException("No s'ha pogut carregar la vista d'un item", e);
+        }
+    }
+
+    private void handleItemSelected(SegaItemData item) {
+        selectedItem = item;
+        selectItem(item);
+
+        if (isMobileLayout()) {
+            ControllerDetailMobile detailCtrl =
+                (ControllerDetailMobile) com.utils.UtilsViews.getController(DETAIL_MOBILE_VIEW_ID);
+            if (detailCtrl != null) {
+                detailCtrl.setItemData(item);
             }
+            com.utils.UtilsViews.setViewAnimating(DETAIL_MOBILE_VIEW_ID);
         }
-        
+    }
+
+    private boolean isMobileLayout() {
+        return list1 != null && list1.getScene() != null && list1.getScene().getWidth() < 500;
+    }
+
+    private void selectItem(SegaItemData item) {
+        if (image != null) {
+            String fullImagePath = IMAGE_BASE_PATH + item.getImage();
+            imageCache.getImage(getClass(), fullImagePath).ifPresent(image::setImage);
+        }
+
         if (nom != null) {
-            nom.setText(character.getName());
+            nom.setText(item.getName());
         }
-        
+
         if (nom1 != null) {
-            nom1.setText(character.getGame());
+            nom1.setText(item.getGame());
         }
     }
 
@@ -239,23 +204,30 @@ public class ControllerMain {
     public String getCurrentType() { return currentType; }
 
     public void setCurrentFilter(String filter) {
-        this.currentFilter = filter;
+        this.currentFilter = (filter == null || filter.isBlank()) ? ALL_CATEGORIES : filter;
         if (categoryChoice != null) {
-            categoryChoice.setValue(filter);
+            if (!categoryChoice.getItems().contains(this.currentFilter)) {
+                this.currentFilter = ALL_CATEGORIES;
+            }
+            categoryChoice.setValue(this.currentFilter);
         }
         refreshList();
     }
 
     public void setCurrentType(String type) {
-        this.currentType = type;
+        this.currentType = (type == null || type.isBlank()) ? DEFAULT_TYPE : type;
         if (typeChoice != null) {
-            typeChoice.setValue(type);
+            if (!typeChoice.getItems().contains(this.currentType) && !typeChoice.getItems().isEmpty()) {
+                this.currentType = typeChoice.getItems().get(0);
+            }
+            typeChoice.setValue(this.currentType);
         }
-        updateCategoryChoice();
+        updateCategoryChoice(true);
+        refreshList();
     }
 
-    public void selectCharacterFromDetail(SegaItemData character) {
-        System.out.println("Seleccionant des de detall: " + character.getName());
-        selectCharacter(character);
+    public void selectItemFromDetail(SegaItemData item) {
+        selectedItem = item;
+        selectItem(item);
     }
 }

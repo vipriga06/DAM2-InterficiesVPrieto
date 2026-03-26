@@ -1,12 +1,12 @@
 package com.segadb;
 
-import com.utils.UtilsViews;
+import java.io.InputStream;
+import java.util.function.Consumer;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Circle;
 
 public class ControllerItem1 {
@@ -23,10 +23,31 @@ public class ControllerItem1 {
     @FXML
     private Circle circle;
 
-    private SegaItemData characterData;
+    private SegaItemData itemData;
+    private Consumer<SegaItemData> onItemSelected = item -> { };
 
     public void setItemData(SegaItemData data) {
-        this.characterData = data;
+        this.itemData = data;
+    }
+
+    public void setOnItemSelected(Consumer<SegaItemData> onItemSelected) {
+        this.onItemSelected = onItemSelected != null ? onItemSelected : item -> { };
+    }
+
+    public void bindData(SegaItemData data, Image imageResource) {
+        setItemData(data);
+        setTitle(data.getName());
+        setSubtitle(data.getGame());
+        setCircleColor(data.getColor());
+        if (imageResource != null) {
+            image.setImage(imageResource);
+        }
+    }
+
+    public void notifySelection() {
+        if (itemData != null) {
+            onItemSelected.accept(itemData);
+        }
     }
 
     public void setTitle(String title) {
@@ -38,43 +59,23 @@ public class ControllerItem1 {
     }
 
     public void setImage(String imagePath) {
-        try {
-            if (imagePath == null || imagePath.isEmpty()) {
-                System.err.println("Error: imagePath és nul o buit");
-                return;
-            }
-            
-            java.io.InputStream is = getClass().getResourceAsStream(imagePath);
-            if (is == null) {
-                System.err.println("No s'ha trobat la imatge: " + imagePath);
-                return;
-            }
-            
-            Image img = new Image(is);
-            this.image.setImage(img);
-            System.out.println("Imatge carregada correctament: " + imagePath);
-        } catch (Exception e) {
-            System.err.println("Error carregant la imatge: " + imagePath);
-            e.printStackTrace();
+        if (imagePath == null || imagePath.isEmpty()) {
+            System.err.println("Error: imagePath és nul o buit");
+            return;
         }
+
+        InputStream is = getClass().getResourceAsStream(imagePath);
+        if (is == null) {
+            System.err.println("No s'ha trobat la imatge: " + imagePath);
+            return;
+        }
+
+        Image img = new Image(is);
+        this.image.setImage(img);
     }
 
     public void setCircleColor(String color) {
         circle.setStyle("-fx-fill: " + color);
     }
 
-    @FXML
-    private void onItemClicked(MouseEvent event) {
-        if (UtilsViews.parentContainer.getScene().getWidth() < 500 && characterData != null) {
-            try {
-                ControllerDetailMobile detailCtrl = (ControllerDetailMobile) UtilsViews.getController("ViewDetailMobile");
-                if (detailCtrl != null) {
-                    detailCtrl.setItemData(characterData);
-                }
-                UtilsViews.setViewAnimating("ViewDetailMobile");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
 }

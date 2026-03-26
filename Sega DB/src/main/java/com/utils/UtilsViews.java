@@ -1,6 +1,8 @@
 package com.utils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
@@ -17,6 +19,7 @@ public class UtilsViews {
 
     public static StackPane parentContainer = new StackPane();
     public static ArrayList<Object> controllers = new ArrayList<>();
+    private static final Map<String, Object> controllersByViewId = new HashMap<>();
 
     // Add one view to the list
     public static void addView(Class<?> cls, String name, String path) throws Exception {
@@ -36,19 +39,14 @@ public class UtilsViews {
         view.setManaged(defaultView);
 
         children.add(view);
-        controllers.add(loader.getController());
+        Object controller = loader.getController();
+        controllers.add(controller);
+        controllersByViewId.put(name, controller);
     }
 
     // Get controller by view id (viewId)
     public static Object getController(String viewId) {
-        int index = 0;
-        for (Node n : parentContainer.getChildren()) {
-            if (n.getId().equals(viewId)) {
-                return controllers.get(index);
-            }
-            index++;
-        }
-        return null;
+        return controllersByViewId.get(viewId);
     }
 
     // Get name of active view
@@ -96,6 +94,10 @@ public class UtilsViews {
             }
         }
 
+        if (curView == null) {
+            return;
+        }
+
         if (curView.getId().equals(viewId)) {
             return; // Do nothing if current view is the same as the next view
         }
@@ -108,18 +110,22 @@ public class UtilsViews {
             }
         }
 
+        if (nxtView == null) {
+            return;
+        }
+
         // Set nxtView visible
         nxtView.setVisible(true);
         nxtView.setManaged(true);
 
         // By default, set animation to the left
         double width = parentContainer.getScene().getWidth();
-        double xLeftStart = 0;
-        double xLeftEnd = 0;
-        double xRightStart = 0;
-        double xRightEnd = 0;
-        Node animatedViewLeft = null;
-        Node animatedViewRight = null;
+        double xLeftStart;
+        double xLeftEnd;
+        double xRightStart;
+        double xRightEnd;
+        Node animatedViewLeft;
+        Node animatedViewRight;
 
         if (list.indexOf(curView) < list.indexOf(nxtView)) {
 
