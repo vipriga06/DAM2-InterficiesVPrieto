@@ -23,9 +23,9 @@ public class ControllerItem1 {
     @FXML
     private Circle circle;
 
-    private CharacterData characterData;
+    private SegaItemData characterData;
 
-    public void setCharacterData(CharacterData data) {
+    public void setItemData(SegaItemData data) {
         this.characterData = data;
     }
 
@@ -69,7 +69,7 @@ public class ControllerItem1 {
             try {
                 ControllerDetailMobile detailCtrl = (ControllerDetailMobile) UtilsViews.getController("ViewDetailMobile");
                 if (detailCtrl != null) {
-                    detailCtrl.setCharacterData(characterData);
+                    detailCtrl.setItemData(characterData);
                 }
                 UtilsViews.setViewAnimating("ViewDetailMobile");
             } catch (Exception e) {

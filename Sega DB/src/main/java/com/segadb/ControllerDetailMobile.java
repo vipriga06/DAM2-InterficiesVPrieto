@@ -24,7 +24,7 @@ public class ControllerDetailMobile {
     @FXML
     private Label detailType;
 
-    private CharacterData currentCharacter;
+    private SegaItemData currentCharacter;
 
     @FXML
     public void initialize() {
@@ -41,7 +41,7 @@ public class ControllerDetailMobile {
         }
     }
 
-    public void setCharacterData(CharacterData character) {
+    public void setItemData(SegaItemData character) {
         this.currentCharacter = character;
         updateView();
     }

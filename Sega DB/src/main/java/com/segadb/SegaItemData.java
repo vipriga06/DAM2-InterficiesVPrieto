@@ -1,13 +1,13 @@
 package com.segadb;
 
-public class CharacterData {
-    private String name;
-    private String image;
-    private String color;
-    private String game;
-    private String type;
+public class SegaItemData {
+    private final String name;
+    private final String image;
+    private final String color;
+    private final String game;
+    private final String type;
 
-    public CharacterData(String name, String image, String color, String game, String type) {
+    public SegaItemData(String name, String image, String color, String game, String type) {
         this.name = name;
         this.image = image;
         this.color = color;

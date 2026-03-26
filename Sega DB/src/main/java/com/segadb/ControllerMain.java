@@ -39,7 +39,7 @@ public class ControllerMain {
     @FXML
     private ChoiceBox<String> typeChoice; // Nuevo ChoiceBox para tipos
 
-    private List<CharacterData> allCharacters = new ArrayList<>();
+    private List<SegaItemData> allCharacters = new ArrayList<>();
     private String currentFilter = "Tots";
     private String currentType = "character";
 
@@ -77,7 +77,7 @@ public class ControllerMain {
             
             List<String> categories = allCharacters.stream()
                 .filter(c -> c.getType().equals(currentType))
-                .map(CharacterData::getGame)
+                .map(SegaItemData::getGame)
                 .distinct()
                 .sorted()
                 .collect(Collectors.toList());
@@ -126,7 +126,7 @@ public class ControllerMain {
                 String game = obj.getString("game");
                 String type = obj.getString("type");
 
-                allCharacters.add(new CharacterData(name, imageFile, color, game, type));
+                allCharacters.add(new SegaItemData(name, imageFile, color, game, type));
             }
 
             System.out.println("Dades carregades: " + allCharacters.size());
@@ -147,7 +147,7 @@ public class ControllerMain {
         System.out.println("Total elements: " + allCharacters.size());
         System.out.println("Tipus actual: " + currentType);
 
-        List<CharacterData> filteredCharacters = allCharacters.stream()
+        List<SegaItemData> filteredCharacters = allCharacters.stream()
             .filter(c -> c.getType().equals(currentType))
             .collect(Collectors.toList());
 
@@ -163,7 +163,7 @@ public class ControllerMain {
         System.out.println("Intentant cargar " + filteredCharacters.size() + " elements...");
         
         try {
-            for (CharacterData character : filteredCharacters) {
+            for (SegaItemData character : filteredCharacters) {
                 System.out.println("Cargant: " + character.getName());
                 FXMLLoader loader = new FXMLLoader(
                     getClass().getResource("/assets/subviewCharacters.fxml")
@@ -179,7 +179,7 @@ public class ControllerMain {
                 System.out.println("Intentant cargar imatge: " + fullImagePath);
                 controllerItem.setImage(fullImagePath);
                 controllerItem.setCircleColor(character.getColor());
-                controllerItem.setCharacterData(character);
+                controllerItem.setItemData(character);
 
                 item.setOnMouseClicked(event -> {
                     selectCharacter(character);
@@ -188,7 +188,7 @@ public class ControllerMain {
                         if (sceneWidth < 500) {
                             ControllerDetailMobile detailCtrl = (ControllerDetailMobile) com.utils.UtilsViews.getController("ViewDetailMobile");
                             if (detailCtrl != null) {
-                                detailCtrl.setCharacterData(character);
+                                detailCtrl.setItemData(character);
                             }
                             com.utils.UtilsViews.setViewAnimating("ViewDetailMobile");
                         }
@@ -205,7 +205,7 @@ public class ControllerMain {
         }
     }
 
-    private void selectCharacter(CharacterData character) {
+    private void selectCharacter(SegaItemData character) {
         System.out.println("Seleccionat: " + character.getName());
         
         if (image != null) {
@@ -254,7 +254,7 @@ public class ControllerMain {
         updateCategoryChoice();
     }
 
-    public void selectCharacterFromDetail(CharacterData character) {
+    public void selectCharacterFromDetail(SegaItemData character) {
         System.out.println("Seleccionant des de detall: " + character.getName());
         selectCharacter(character);
     }
