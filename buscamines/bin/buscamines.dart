@@ -7,7 +7,7 @@ const int totalMines = 8;
 const int minesPerQuadrant = 2;
 const String hiddenCellChar = '·';
 
-void main() => MinesweeperGame().run();
+void main() => buscamines().run();
 
 class Cell {
   bool mine = false;
@@ -16,8 +16,8 @@ class Cell {
   int n = 0;
 }
 
-class MinesweeperGame {
-  MinesweeperGame() {
+class buscamines {
+  buscamines() {
     _placeInitialMines();
   }
 
@@ -108,8 +108,9 @@ class MinesweeperGame {
     if (mines == 0) {
       for (var dr = -1; dr <= 1; dr++) {
         for (var dc = -1; dc <= 1; dc++) {
-          if (dr != 0 || dc != 0)
+          if (dr != 0 || dc != 0) {
             _reveal(row + dr, col + dc, firstMove: false, userMove: false);
+          }
         }
       }
     }
@@ -137,19 +138,23 @@ class MinesweeperGame {
     final left = _boardLines(showMines);
     if (_cheat && !showMines) {
       final right = _boardLines(true);
-      for (var i = 0; i < left.length; i++)
+      for (var i = 0; i < left.length; i++) {
         stdout.writeln('${left[i]}     ${right[i]}');
+      }
       return;
     }
-    for (final line in left) stdout.writeln(line);
+    for (final line in left) {
+      stdout.writeln(line);
+    }
   }
 
   List<String> _boardLines(bool showMines) {
     final out = <String>[' 0123456789'];
     for (var r = 0; r < boardRows; r++) {
       final line = StringBuffer(String.fromCharCode('A'.codeUnitAt(0) + r));
-      for (var c = 0; c < boardCols; c++)
+      for (var c = 0; c < boardCols; c++) {
         line.write(_char(_cell(r, c), showMines));
+      }
       out.add(line.toString());
     }
     return out;
@@ -205,7 +210,9 @@ class MinesweeperGame {
   int _openedSafeCells() {
     var count = 0;
     for (final row in _board) {
-      for (final c in row) if (!c.mine && c.open) count++;
+      for (final c in row) {
+        if (!c.mine && c.open) count++;
+      }
     }
     return count;
   }
@@ -220,7 +227,9 @@ class MinesweeperGame {
   void _placeMinesInQuadrant(int r0, int r1, int c0, int c1) {
     final pos = <(int, int)>[];
     for (var r = r0; r <= r1; r++) {
-      for (var c = c0; c <= c1; c++) pos.add((r, c));
+      for (var c = c0; c <= c1; c++) {
+        pos.add((r, c));
+      }
     }
     pos.shuffle(_r);
     for (var i = 0; i < minesPerQuadrant; i++) {
