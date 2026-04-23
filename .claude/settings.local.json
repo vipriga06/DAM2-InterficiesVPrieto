@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(flutter pub *)",
+      "Bash(flutter analyze *)",
+      "Bash(start ms-settings:developers)",
+      "Bash(flutter doctor *)",
+      "Bash(wsl --list --verbose)"
+    ]
+  }
+}

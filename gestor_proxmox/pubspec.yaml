@@ -1,0 +1,24 @@
+name: gestor_proxmox
+description: "Gestor d'arxius per a Proxmox via SSH"
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.11.5
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  dartssh2: ^2.9.0
+  path_provider: ^2.1.5
+  file_picker: ^8.1.7
+  archive: ^3.6.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
