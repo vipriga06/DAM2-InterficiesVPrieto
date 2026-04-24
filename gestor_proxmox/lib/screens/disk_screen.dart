@@ -118,7 +118,7 @@ class _DiskScreenState extends State<DiskScreen> {
 
     return LayoutBuilder(builder: (ctx, constraints) {
       final canvasSize =
-          (constraints.maxHeight * 0.65).clamp(200.0, 500.0);
+          (constraints.maxWidth * 0.70).clamp(280.0, 520.0);
       return SingleChildScrollView(
         padding: const EdgeInsets.all(24),
         child: Column(

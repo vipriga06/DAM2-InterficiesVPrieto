@@ -53,6 +53,30 @@ class _FilesScreenState extends State<FilesScreen> {
     }
   }
 
+  Future<void> _loadSidebarSection(String section) async {
+    setState(() { _loading = true; _selected = null; });
+    try {
+      List<RemoteFile> files;
+      switch (section) {
+        case 'Recents':
+          files = await widget.sshService.listRecent(_currentPath);
+        case 'Compartit':
+          files = await widget.sshService.listShared(_currentPath);
+        case 'Eliminats':
+          files = await widget.sshService.listTrash();
+        default:
+          await _loadFiles(_currentPath);
+          return;
+      }
+      if (!mounted) return;
+      setState(() { _files = files; _loading = false; });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _loading = false);
+      _showError('Error carregant $section: $e');
+    }
+  }
+
   Future<void> _detectServer(String path) async {
     final type = await widget.sshService.detectServerType(path);
     if (!mounted) return;
@@ -366,7 +390,10 @@ class _FilesScreenState extends State<FilesScreen> {
           const SizedBox(height: 8),
           for (final item in items)
             InkWell(
-              onTap: () => setState(() => _sidebarItem = item),
+              onTap: () {
+                setState(() => _sidebarItem = item);
+                _loadSidebarSection(item);
+              },
               child: Container(
                 margin:
                     const EdgeInsets.symmetric(horizontal: 8, vertical: 2),

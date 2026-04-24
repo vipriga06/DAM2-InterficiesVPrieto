@@ -19,6 +19,6 @@ class GestorProxmoxApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: ConfigScreen(sshService: SshService()),
-    );
+      );
   }
 }

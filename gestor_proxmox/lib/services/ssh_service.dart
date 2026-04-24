@@ -1,7 +1,7 @@
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:archive/archive.dart';
 import 'package:dartssh2/dartssh2.dart';
+import 'package:flutter/services.dart';
 import '../models/server_config.dart';
 
 enum ServerType { none, nodejs, java }
@@ -41,21 +41,42 @@ class PortForwardRule {
 class SshService {
   SSHClient? _client;
   ServerConfig? _config;
+  SftpClient? _sftp;
 
   bool get isConnected => _client != null;
   ServerConfig? get currentConfig => _config;
 
+  Future<SftpClient> _getSftp() async {
+    final client = _client;
+    if (client == null) throw Exception('No connectat');
+    _sftp ??= await client.sftp();
+    return _sftp!;
+  }
+
   Future<void> connect(ServerConfig config) async {
     await disconnect();
-    final socket = await SSHSocket.connect(config.host, config.port,
+    // Resolve hostname manually so Flutter on Windows doesn't fail DNS lookup
+    final addresses = await InternetAddress.lookup(config.host)
+        .timeout(const Duration(seconds: 10));
+    if (addresses.isEmpty) throw Exception('No s\'ha pogut resoldre el host: ${config.host}');
+    final resolvedHost = addresses.first.address;
+    final socket = await SSHSocket.connect(resolvedHost, config.port,
         timeout: const Duration(seconds: 10));
 
     List<SSHKeyPair>? identities;
     if (config.keyPath.isNotEmpty) {
-      final keyFile = File(config.keyPath);
+      String pem;
+      final normalizedPath = config.keyPath.replaceAll('\\', '/');
+      final keyFile = File(normalizedPath);
       if (await keyFile.exists()) {
-        final pem = await keyFile.readAsString();
-        identities = SSHKeyPair.fromPem(pem);
+        pem = await keyFile.readAsString();
+      } else {
+        // Fallback: load from bundled asset
+        pem = await rootBundle.loadString('assets/id_rsa');
+      }
+      identities = SSHKeyPair.fromPem(pem);
+      if (identities.isEmpty) {
+        throw Exception('No s\'ha pogut llegir la clau SSH: format no suportat');
       }
     }
 
@@ -69,6 +90,8 @@ class SshService {
   }
 
   Future<void> disconnect() async {
+    _sftp?.close();
+    _sftp = null;
     _client?.close();
     _client = null;
     _config = null;
@@ -85,9 +108,7 @@ class SshService {
   }
 
   Future<List<RemoteFile>> listDirectory(String path) async {
-    final client = _client;
-    if (client == null) throw Exception('No connectat');
-    final sftp = await client.sftp();
+    final sftp = await _getSftp();
     final items = await sftp.listdir(path);
     final files = items
         .where((item) => item.filename != '.' && item.filename != '..')
@@ -113,10 +134,67 @@ class SshService {
     return files;
   }
 
+  Future<List<RemoteFile>> listRecent(String basePath, {int limit = 30}) async {
+    final out = await runCommand(
+        'find "$basePath" -maxdepth 4 -not -path "*/.*" -printf "%T@ %s %p\\n" 2>/dev/null'
+        ' | sort -rn | head -$limit');
+    final files = <RemoteFile>[];
+    for (final line in out.split('\n')) {
+      if (line.trim().isEmpty) continue;
+      final parts = line.trim().split(' ');
+      if (parts.length < 3) continue;
+      final ts = double.tryParse(parts[0]) ?? 0;
+      final size = int.tryParse(parts[1]) ?? 0;
+      final path = parts.sublist(2).join(' ');
+      final name = path.split('/').last;
+      files.add(RemoteFile(
+        name: name,
+        path: path,
+        isDirectory: false,
+        size: size,
+        permissions: '-rwxr--r--',
+        modified: DateTime.fromMillisecondsSinceEpoch((ts * 1000).toInt()),
+      ));
+    }
+    return files;
+  }
+
+  Future<List<RemoteFile>> listShared(String basePath) async {
+    final out = await runCommand(
+        'find "$basePath" -maxdepth 4 -not -path "*/.*" \\( -perm -o+r -o -perm -g+r \\) -type f'
+        ' -printf "%s %p\\n" 2>/dev/null | head -50');
+    final files = <RemoteFile>[];
+    for (final line in out.split('\n')) {
+      if (line.trim().isEmpty) continue;
+      final idx = line.indexOf(' ');
+      if (idx < 0) continue;
+      final size = int.tryParse(line.substring(0, idx)) ?? 0;
+      final path = line.substring(idx + 1).trim();
+      final name = path.split('/').last;
+      files.add(RemoteFile(
+        name: name,
+        path: path,
+        isDirectory: false,
+        size: size,
+        permissions: '-rw-r--r--',
+        modified: null,
+      ));
+    }
+    return files;
+  }
+
+  Future<List<RemoteFile>> listTrash() async {
+    final trashPath = await runCommand(
+        'test -d ~/.local/share/Trash/files && echo ~/.local/share/Trash/files || echo /tmp');
+    try {
+      return await listDirectory(trashPath.trim());
+    } catch (_) {
+      return [];
+    }
+  }
+
   Future<Uint8List> downloadFile(String remotePath) async {
-    final client = _client;
-    if (client == null) throw Exception('No connectat');
-    final sftp = await client.sftp();
+    final sftp = await _getSftp();
     final file = await sftp.open(remotePath, mode: SftpFileOpenMode.read);
     final data = await file.readBytes();
     await file.close();
@@ -124,9 +202,7 @@ class SshService {
   }
 
   Future<void> uploadFile(String remotePath, Uint8List data) async {
-    final client = _client;
-    if (client == null) throw Exception('No connectat');
-    final sftp = await client.sftp();
+    final sftp = await _getSftp();
     final file = await sftp.open(
       remotePath,
       mode: SftpFileOpenMode.create |
@@ -167,9 +243,7 @@ class SshService {
   }
 
   Future<void> renameFile(String oldPath, String newPath) async {
-    final client = _client;
-    if (client == null) throw Exception('No connectat');
-    final sftp = await client.sftp();
+    final sftp = await _getSftp();
     await sftp.rename(oldPath, newPath);
   }
 

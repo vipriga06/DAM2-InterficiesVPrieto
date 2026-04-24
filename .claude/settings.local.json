@@ -5,7 +5,9 @@
       "Bash(flutter analyze *)",
       "Bash(start ms-settings:developers)",
       "Bash(flutter doctor *)",
-      "Bash(wsl --list --verbose)"
+      "Bash(wsl --list --verbose)",
+      "Bash(where java *)",
+      "Bash(java -version)"
     ]
   }
 }
